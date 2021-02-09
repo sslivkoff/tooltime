@@ -15,10 +15,14 @@ the goal of `tooltime` is to simplify operations on time representations, includ
 | `Timefrequency` | a rate                           | every four minutes            |
 
 ## Contents
+- [Install](#install)
 - [Example Usage](#example-usage)
 - [Datatype Representations](#datatype-representations)
 - [Function Reference](#function-reference)
 - [Frequently Asked Questions](#frequently-asked-questions)
+
+## Install
+`pip install tooltime`
 
 ## Example Usage
 
