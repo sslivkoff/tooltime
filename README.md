@@ -1,12 +1,8 @@
 
 # tooltime
-the goal of `tooltime` is to simplify operations on time representations, including:
-- creation
-- validation
-- conversion
-- introspection
+`tooltime` makes it simple to represent and manipulate many different representations of time
 
-`tooltime` operates on 4 time datatypes:
+`tooltime` operates on 4 abstract time datatypes:
 |                 | meaning                          | example                       |
 | --              | --                               | --                            |
 | `Timestamp`     | a moment in time                 |  today at 3:03 PM             |
@@ -14,15 +10,16 @@ the goal of `tooltime` is to simplify operations on time representations, includ
 | `Timeperiod`    | a period with a start and an end | from 3:03 PM to 3:07 PM today |
 | `Timefrequency` | a rate                           | every four minutes            |
 
+Each datatype has multiple interconvertible representations using native python types
+
+## Install
+`pip install tooltime`
+
 ## Contents
-- [Install](#install)
 - [Example Usage](#example-usage)
 - [Datatype Representations](#datatype-representations)
 - [Function Reference](#function-reference)
 - [Frequently Asked Questions](#frequently-asked-questions)
-
-## Install
-`pip install tooltime`
 
 ## Example Usage
 
@@ -75,9 +72,10 @@ resolution:
 ```
 
 #### Create Standardized Timeperiods
+Create timeperiods whose boundaries are integer multiples of some `block_unit`. These useful for placing erratically distributed timestamps into regular bins
+
 ```python
-# create timeperiod whose boundaries are integer multiples of some block_unit
-# useful for placing erratically distributed timestamps into regular bins
+
 timestamp = 1600000000
 block_size = 3
 print('timestamp:', tooltime.timestamp_to_label(timestamp))
@@ -155,6 +153,12 @@ valid time units are `'s'`, `'m'`, `'h'`, `'d'`, `'w'`, `'M'`, and `'y'`, indica
 | *conversion*     | `convert_<datatype>()`                                      | convert datattype representation |
 | *conversion*     | `convert_<datatype>_to_<representation>()`                  | convert datatype to specific representation |
 | *conversion*     | `convert_<datatype>_<representation>_to _<representation>()` | convert datatype with known representation to specific representation |
+
+All functions for each datatype are listed below
+- [Identfication Functions](#identification-functions)
+- [Creation Functions](#creation-functions)
+- [Conversion Functions](#conversion-functions)
+- [Specialized Functions](#specialized-functions)
 
 #### Identification Functions
 |                                           | example call                                                                   | example output          |
@@ -262,6 +266,7 @@ these are functions that are specific to each datatype
 | --              | --                                | -- |
 | `Timestamp`     | `floor_datetime()`                | return floor of `datetime` to specified unit of precision |
 | `Timestamp`     | `get_unit_lowest_value()`         | return int of lowest possible for value for a given time unit |
+| `Timestamp` iterable | `print_timestamp_summary()`  | print a variety of summary statistics about `Timestamp`s |
 | `Timeperiod`    | `timeperiods_overlap()`           | return `bool` of whether `Timeperiod`s have any overlap |
 | `Timeperiod`    | `timeperiod_contains()`           | return `bool` of whether `Timeperiod` contains other `Timeperiod` |
 | `Timeperiod`    | `create_superset_timeperiod()`    | create `Timeperiod` that contains all input `Timeperiod`s |
