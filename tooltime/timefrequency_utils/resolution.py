@@ -1,5 +1,3 @@
-import numpy as np
-
 from .. import timelength_utils
 
 
@@ -16,6 +14,8 @@ def detect_resolution(timestamps, use_n=None, outlier_rtol=0.5):
         - smaller n will be faster but could be less representative
     - outlier_rtol: float of tolerance for detecting outliers
     """
+
+    import numpy as np
 
     if len(timestamps) == 1:
         return None

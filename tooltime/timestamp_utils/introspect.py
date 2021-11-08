@@ -1,5 +1,3 @@
-import numpy as np
-
 from .. import timefrequency_utils
 from .. import timelength_utils
 from . import convert
@@ -11,9 +9,6 @@ def summarize_timestamps(timestamps):
     ## Inputs
     - timestamps: iterable of Timestamp
     """
-
-    if not isinstance(timestamps, np.ndarray):
-        timestamps = np.array(timestamps)
 
     n_t = len(timestamps)
     summary = {'n_t': n_t}
@@ -39,12 +34,13 @@ def summarize_timestamps(timestamps):
         n_outliers = n_large_outliers + n_small_outliers
 
         if resolution['median_dt'] > 0.0001:
-            n_ideal = np.arange(
+            n_ideal = range(
                 timestamps[0],
                 timestamps[-1] + resolution['median_dt'],
                 resolution['median_dt'],
             )
-            n_missing = n_ideal.shape[0] - len(timestamps)
+            n_ideal = list(n_ideal)
+            n_missing = len(n_ideal) - len(timestamps)
         else:
             n_missing = 'median dt <= 0.0001'
 

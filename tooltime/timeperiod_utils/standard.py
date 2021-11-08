@@ -1,6 +1,5 @@
 import datetime
-
-import numpy as np
+import math
 
 from .. import timelength_utils
 from .. import timestamp_utils
@@ -68,7 +67,7 @@ def get_standard_timeperiod(
     # compute from_datetime
     current_unit = getattr(dt, block_unit)
     lowest_unit_value = timestamp_utils.get_unit_lowest_value(block_unit)
-    current_block = int(np.floor((current_unit - lowest_unit_value) / block_size))
+    current_block = math.floor((current_unit - lowest_unit_value) / block_size)
     from_unit = current_block * block_size + lowest_unit_value
     from_datetime = timestamp_utils.floor_datetime(dt, block_unit)
     from_datetime = from_datetime.replace(**{block_unit: from_unit})
@@ -78,7 +77,7 @@ def get_standard_timeperiod(
         # datetime.timedelta does not support months
         to_month_raw = from_datetime.month + block_size
         to_month = to_month_raw % 12
-        to_year = from_datetime.year + int(np.floor(to_month_raw / 12))
+        to_year = from_datetime.year + math.floor(to_month_raw / 12)
         to_datetime = from_datetime.replace(month=to_month, year=to_year)
     else:
         block_timedelta = datetime.timedelta(**{(block_unit + 's'): block_size})

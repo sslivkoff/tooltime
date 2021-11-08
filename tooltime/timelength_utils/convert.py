@@ -1,6 +1,5 @@
 import datetime
-
-import numpy as np
+import math
 
 from . import units
 from . import identify
@@ -206,9 +205,9 @@ def timelength_seconds_to_label(
     """
 
     seconds = timelength_seconds
-    if isinstance(seconds, (float, np.float32, np.float16)):
+    if type(seconds).__name__ in ['float', 'float64', 'float32', 'float16']:
         int_seconds = int(seconds)
-        if np.isclose(int_seconds, seconds):
+        if math.isclose(int_seconds, seconds):
             seconds = int_seconds
 
         elif int_seconds > 5.0:
@@ -229,7 +228,7 @@ def timelength_seconds_to_label(
 
         # attempt match to base unit
         if base_only:
-            if np.isclose(seconds, base_seconds):
+            if math.isclose(seconds, base_seconds):
                 return base_label
             else:
                 continue
@@ -237,7 +236,7 @@ def timelength_seconds_to_label(
         # attempt exact match of base unit multiple
         quotient = seconds / base_seconds
         quotient_as_int = round(quotient)
-        if np.isclose(quotient, quotient_as_int):
+        if math.isclose(quotient, quotient_as_int):
             unit_count = quotient_as_int
             unit_letter = base_label[-1]
             break
@@ -263,7 +262,7 @@ def timelength_seconds_to_label(
 def timelength_seconds_to_clock(timelength_seconds):
     """convert seconds to TimelengthClock"""
     base_units = units.get_base_units()
-    n_days = int(np.floor(timelength_seconds / base_units['1d']))
+    n_days = math.floor(timelength_seconds / base_units['1d'])
     n_seconds_remaining = timelength_seconds % base_units['1d']
     clock = str(datetime.timedelta(seconds=n_seconds_remaining))
     if n_days > 0:
@@ -289,10 +288,10 @@ def timelength_seconds_to_phrase(timelength_seconds):
     unit_counts = []
     for unit_name in unit_names:
         unit_seconds = base_units[unit_names_to_labels[unit_name]]
-        unit_count = int(np.floor(remaining / unit_seconds))
+        unit_count = math.floor(remaining / unit_seconds)
         unit_counts.append(unit_count)
         remaining = remaining % unit_seconds
-    if not np.isclose(remaining, 0):
+    if not math.isclose(remaining, 0):
         unit_counts[-1] += remaining
 
     # assemble pieces from unit counts
@@ -315,9 +314,9 @@ def timelength_seconds_to_clock_phrase(timelength_seconds):
     """convert seconds to TimelengthClockPhrase"""
 
     base_units = units.get_base_units()
-    n_years = int(np.floor(timelength_seconds / base_units['1y']))
+    n_years = math.floor(timelength_seconds / base_units['1y'])
     n_years_remainder = timelength_seconds % base_units['1y']
-    n_days = int(np.floor(n_years_remainder / base_units['1d']))
+    n_days = math.floor(n_years_remainder / base_units['1d'])
     n_days_remainder = n_years_remainder % base_units['1d']
 
     phrase_pieces = []
@@ -326,7 +325,7 @@ def timelength_seconds_to_clock_phrase(timelength_seconds):
     if n_days > 0:
         phrase_pieces.append(str(n_days) + ' days')
     if n_days_remainder > 0:
-        if isinstance(n_days_remainder, np.int64):
+        if type(n_days_remainder).__name__ == 'int64':
             n_days_remainder = int(n_days_remainder)
         phrase_pieces.append(str(datetime.timedelta(seconds=n_days_remainder)))
 
