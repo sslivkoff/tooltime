@@ -1,9 +1,14 @@
 import time
+import typing
 
-from . import convert
+from .. import spec
+from . import timestamp_convert
 
 
-def create_timestamp(seconds=None, representation='TimestampSeconds'):
+def create_timestamp(
+    seconds: typing.SupportsFloat = None,
+    representation: spec.TimestampRepresentation = 'TimestampSeconds',
+) -> spec.Timestamp:
     """create Timestamp
 
     ## Inputs
@@ -27,37 +32,47 @@ def create_timestamp(seconds=None, representation='TimestampSeconds'):
         raise Exception('unknown representation: ' + str(representation))
 
 
-def create_timestamp_seconds(seconds=None):
+def create_timestamp_seconds(
+    seconds: typing.SupportsFloat = None,
+) -> spec.TimestampSeconds:
     """create Timestamp with representation TimestampSeconds"""
     if seconds is None:
         seconds = time.time()
-    return int(seconds)
+    return int(float(seconds))
 
 
-def create_timestamp_seconds_precise(seconds=None):
+def create_timestamp_seconds_precise(
+    seconds: typing.SupportsFloat = None,
+) -> spec.TimestampSecondsPrecise:
     """create Timestamp with representation TimestampSecondsPrecise"""
     if seconds is None:
         seconds = time.time()
     return float(seconds)
 
 
-def create_timestamp_label(seconds=None):
+def create_timestamp_label(
+    seconds: typing.SupportsFloat = None,
+) -> spec.TimestampLabel:
     """create Timestamp with representation TimestampLabel"""
     if seconds is None:
         seconds = time.time()
-    return convert.timestamp_seconds_to_label(seconds)
+    return timestamp_convert.timestamp_seconds_to_label(seconds)
 
 
-def create_timestamp_iso(seconds=None):
+def create_timestamp_iso(
+    seconds: typing.SupportsFloat = None,
+) -> spec.TimestampISO:
     """create Timestamp with representation TimestampISO"""
     if seconds is None:
         seconds = time.time()
-    return convert.timestamp_seconds_to_iso(seconds)
+    return timestamp_convert.timestamp_seconds_to_iso(seconds)
 
 
-def create_timestamp_datetime(seconds=None):
+def create_timestamp_datetime(
+    seconds: typing.SupportsFloat = None,
+) -> spec.TimestampDatetime:
     """create Timestamp with representation TimestampDatetime"""
     if seconds is None:
         seconds = time.time()
-    return convert.timestamp_seconds_to_datetime(seconds)
+    return timestamp_convert.timestamp_seconds_to_datetime(seconds)
 

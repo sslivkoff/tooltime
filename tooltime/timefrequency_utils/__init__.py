@@ -1,5 +1,5 @@
-from .convert import *
-from .crud import *
-from .identify import *
-from .resolution import *
+from .timefrequency_convert import *
+from .timefrequency_crud import *
+from .timefrequency_identify import *
+from .timefrequency_resolution import *
 

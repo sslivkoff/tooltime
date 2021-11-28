@@ -1,6 +1,8 @@
 import datetime
+import typing
 
-from . import identify
+from .. import spec
+from . import timestamp_identify
 
 
 time_format = '%Y%m%d_%H%M%SZ'
@@ -12,7 +14,56 @@ precise_time_format = time_format[:-1] + '%f' + time_format[-1]
 #
 
 
-def convert_timestamp(timestamp, to_representation, from_representation=None):
+@typing.overload
+def convert_timestamp(
+    timestamp: spec.Timestamp,
+    to_representation: typing.Literal['TimestampSeconds'],
+    from_representation: typing.Optional[spec.TimestampRepresentation],
+) -> spec.TimestampSeconds:
+    ...
+
+
+@typing.overload
+def convert_timestamp(
+    timestamp: spec.Timestamp,
+    to_representation: typing.Literal['TimestampSecondsPrecise'],
+    from_representation: typing.Optional[spec.TimestampRepresentation],
+) -> spec.TimestampSecondsPrecise:
+    ...
+
+
+@typing.overload
+def convert_timestamp(
+    timestamp: spec.Timestamp,
+    to_representation: typing.Literal['TimestampLabel'],
+    from_representation: typing.Optional[spec.TimestampRepresentation],
+) -> spec.TimestampLabel:
+    ...
+
+
+@typing.overload
+def convert_timestamp(
+    timestamp: spec.Timestamp,
+    to_representation: typing.Literal['TimestampISO'],
+    from_representation: typing.Optional[spec.TimestampRepresentation],
+) -> spec.TimestampISO:
+    ...
+
+
+@typing.overload
+def convert_timestamp(
+    timestamp: spec.Timestamp,
+    to_representation: typing.Literal['TimestampDatetime'],
+    from_representation: typing.Optional[spec.TimestampRepresentation],
+) -> spec.TimestampDatetime:
+    ...
+
+
+def convert_timestamp(
+    timestamp: spec.Timestamp,
+    to_representation: spec.TimestampRepresentation,
+    from_representation: typing.Optional[spec.TimestampRepresentation] = None,
+) -> spec.Timestamp:
     """convert timestamp to a new representation
 
     ## Inputs
@@ -26,8 +77,8 @@ def convert_timestamp(timestamp, to_representation, from_representation=None):
 
     # determine current representation
     if from_representation is None:
-        from_representation = identify.detect_timestamp_representation(
-            timestamp
+        from_representation = (
+            timestamp_identify.detect_timestamp_representation(timestamp)
         )
 
     # check if representation is required
@@ -35,15 +86,15 @@ def convert_timestamp(timestamp, to_representation, from_representation=None):
         return timestamp
 
     # convert to seconds
-    if from_representation == 'TimestampSeconds':
+    if timestamp_identify.is_timestamp_seconds(timestamp):
+        timestamp_seconds: spec.TimestampSecondsRaw = timestamp
+    elif timestamp_identify.is_timestamp_seconds_precise(timestamp):
         timestamp_seconds = timestamp
-    elif from_representation == 'TimestampSecondsPrecise':
-        timestamp_seconds = timestamp
-    elif from_representation == 'TimestampLabel':
+    elif timestamp_identify.is_timestamp_label(timestamp):
         timestamp_seconds = timestamp_label_to_seconds(timestamp)
-    elif from_representation == 'TimestampISO':
+    elif timestamp_identify.is_timestamp_iso(timestamp):
         timestamp_seconds = timestamp_iso_to_seconds(timestamp)
-    elif from_representation == 'TimestampDatetime':
+    elif timestamp_identify.is_timestamp_datetime(timestamp):
         timestamp_seconds = timestamp_datetime_to_seconds(timestamp)
     else:
         raise Exception(
@@ -52,21 +103,19 @@ def convert_timestamp(timestamp, to_representation, from_representation=None):
 
     # convert to target representation
     if to_representation == 'TimestampSeconds':
-        to_timestamp = int(timestamp_seconds)
+        return int(float(timestamp_seconds))
     elif to_representation == 'TimestampSecondsPrecise':
-        to_timestamp = float(timestamp_seconds)
+        return float(timestamp_seconds)
     elif to_representation == 'TimestampLabel':
-        to_timestamp = timestamp_seconds_to_label(timestamp_seconds)
+        return timestamp_seconds_to_label(timestamp_seconds)
     elif to_representation == 'TimestampISO':
-        to_timestamp = timestamp_seconds_to_iso(timestamp_seconds)
+        return timestamp_seconds_to_iso(timestamp_seconds)
     elif to_representation == 'TimestampDatetime':
-        to_timestamp = timestamp_seconds_to_datetime(timestamp_seconds)
+        return timestamp_seconds_to_datetime(timestamp_seconds)
     else:
         raise Exception(
             'unknown timestamp representation: ' + str(to_representation)
         )
-
-    return to_timestamp
 
 
 #
@@ -74,7 +123,10 @@ def convert_timestamp(timestamp, to_representation, from_representation=None):
 #
 
 
-def timestamp_to_seconds(timestamp, from_representation=None):
+def timestamp_to_seconds(
+    timestamp: spec.Timestamp,
+    from_representation: spec.TimestampRepresentation = None,
+) -> spec.TimestampSeconds:
     """convert timestamp to TimestampSeconds
 
     ## Inputs
@@ -91,7 +143,10 @@ def timestamp_to_seconds(timestamp, from_representation=None):
     )
 
 
-def timestamp_to_seconds_precise(timestamp, from_representation=None):
+def timestamp_to_seconds_precise(
+    timestamp: spec.Timestamp,
+    from_representation: spec.TimestampRepresentation = None,
+) -> spec.TimestampSecondsPrecise:
     """convert timestamp to TimestampSecondsPrecise
 
     ## Inputs
@@ -108,7 +163,10 @@ def timestamp_to_seconds_precise(timestamp, from_representation=None):
     )
 
 
-def timestamp_to_label(timestamp, from_representation=None):
+def timestamp_to_label(
+    timestamp: spec.Timestamp,
+    from_representation: spec.TimestampRepresentation = None,
+) -> spec.TimestampLabel:
     """convert timestamp to TimestampLabel
 
     ## Inputs
@@ -142,7 +200,10 @@ def timestamp_to_iso(timestamp, from_representation=None):
     )
 
 
-def timestamp_to_datetime(timestamp, from_representation=None):
+def timestamp_to_datetime(
+    timestamp: spec.Timestamp,
+    from_representation: spec.TimestampRepresentation = None,
+) -> spec.TimestampDatetime:
     """convert timestamp to TimestampDatetime
 
     ## Inputs
@@ -164,29 +225,35 @@ def timestamp_to_datetime(timestamp, from_representation=None):
 #
 
 
-def timestamp_seconds_to_label(timestamp_seconds):
+def timestamp_seconds_to_label(
+    timestamp_seconds: spec.TimestampSecondsRaw,
+) -> spec.TimestampLabel:
     """convert seconds to TimestampLabel"""
     dt = datetime.datetime.fromtimestamp(
-        timestamp_seconds, datetime.timezone.utc
+        float(timestamp_seconds), datetime.timezone.utc
     )
     human_timestamp = dt.strftime(time_format)
     return human_timestamp
 
 
-def timestamp_seconds_to_iso(timestamp_seconds):
+def timestamp_seconds_to_iso(
+    timestamp_seconds: spec.TimestampSecondsRaw,
+) -> spec.TimestampISO:
     """convert seconds to TimestampISO"""
     dt = datetime.datetime.fromtimestamp(
-        timestamp_seconds, datetime.timezone.utc
+        float(timestamp_seconds), datetime.timezone.utc
     )
     iso_format = "%Y-%m-%dT%H:%M:%SZ"
     iso = dt.strftime(iso_format)
     return iso
 
 
-def timestamp_seconds_to_datetime(timestamp_seconds):
+def timestamp_seconds_to_datetime(
+    timestamp_seconds: spec.TimestampSecondsRaw,
+) -> spec.TimestampDatetime:
     """convert seconds to TimestampDatetime"""
     return datetime.datetime.fromtimestamp(
-        timestamp_seconds, datetime.timezone.utc
+        float(timestamp_seconds), datetime.timezone.utc
     )
 
 
@@ -195,7 +262,9 @@ def timestamp_seconds_to_datetime(timestamp_seconds):
 #
 
 
-def timestamp_label_to_seconds(timestamp_label):
+def timestamp_label_to_seconds(
+    timestamp_label: spec.TimestampLabel,
+) -> spec.TimestampSecondsRaw:
     """convert TimestampLabel to seconds"""
 
     timestamp = timestamp_label
@@ -212,11 +281,12 @@ def timestamp_label_to_seconds(timestamp_label):
         second=int(timestamp[13:15]),
         tzinfo=datetime.timezone.utc,
     )
-    timestamp = dt.timestamp()
-    return timestamp
+    return dt.timestamp()
 
 
-def timestamp_iso_to_seconds(timestamp_iso):
+def timestamp_iso_to_seconds(
+    timestamp_iso: spec.TimestampISO,
+) -> spec.TimestampSecondsRaw:
     """convert TimestampISO to seconds"""
 
     if '.' in timestamp_iso:
@@ -231,7 +301,9 @@ def timestamp_iso_to_seconds(timestamp_iso):
     return seconds
 
 
-def timestamp_datetime_to_seconds(timestamp_datetime):
+def timestamp_datetime_to_seconds(
+    timestamp_datetime: spec.TimestampDatetime,
+) -> spec.TimestampSecondsRaw:
     """convert TimestampDatetime to seconds"""
     return timestamp_datetime.timestamp()
 

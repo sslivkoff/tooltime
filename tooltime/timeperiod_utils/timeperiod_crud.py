@@ -1,6 +1,6 @@
 from .. import timestamp_utils
 from .. import timelength_utils
-from . import identify
+from . import timeperiod_identify
 
 
 def create_timeperiod(
@@ -96,14 +96,18 @@ def compute_start_end(start=None, end=None, length=None):
 def compute_timeperiod_start_end(timeperiod):
     """compute start and end seconds of a timeperiod"""
 
-    representation = identify.detect_timeperiod_representation(timeperiod)
+    representation = timeperiod_identify.detect_timeperiod_representation(
+        timeperiod
+    )
     if representation == 'TimeperiodPair':
         start, end = timeperiod
     elif representation == 'TimeperiodPair':
         start = timeperiod['start']
         end = timeperiod['end']
     else:
-        raise Exception('unknown timeperiod representation: ' + str(representation))
+        raise Exception(
+            'unknown timeperiod representation: ' + str(representation)
+        )
 
     start = timelength_utils.timelength_to_seconds_precise(start)
     end = timelength_utils.timelength_to_seconds_precise(end)

@@ -1,10 +1,15 @@
 import datetime
+import typing
+from typing_extensions import TypeGuard
 
 from .. import exceptions
-from . import convert
+from .. import spec
+from . import timestamp_convert
 
 
-def detect_timestamp_representation(timestamp):
+def detect_timestamp_representation(
+    timestamp: spec.Timestamp,
+) -> spec.TimestampRepresentation:
     """return str name of Timestamp representation"""
     if is_timestamp_seconds(timestamp):
         return 'TimestampSeconds'
@@ -22,7 +27,7 @@ def detect_timestamp_representation(timestamp):
         )
 
 
-def is_timestamp(timestamp):
+def is_timestamp(timestamp: typing.Any) -> TypeGuard[spec.Timestamp]:
     """return bool of whether input is Timestamp"""
     try:
         detect_timestamp_representation(timestamp)
@@ -31,35 +36,49 @@ def is_timestamp(timestamp):
         return False
 
 
-def is_timestamp_seconds(timestamp):
+def is_timestamp_seconds(
+    timestamp: spec.Timestamp,
+) -> TypeGuard[spec.TimestampSeconds]:
     """return bool of whether input is TimestampSeconds"""
     return isinstance(timestamp, int)
 
 
-def is_timestamp_seconds_precise(timestamp):
+def is_timestamp_seconds_precise(
+    timestamp: spec.Timestamp,
+) -> TypeGuard[spec.TimestampSecondsPrecise]:
     """return bool of whether input is TimestampSecondsPrecise"""
     return isinstance(timestamp, float)
 
 
-def is_timestamp_label(timestamp):
+def is_timestamp_label(
+    timestamp: spec.Timestamp,
+) -> TypeGuard[spec.TimestampLabel]:
     """return bool of whether input is TimestampLabel"""
     try:
-        convert.timestamp_label_to_seconds(timestamp)
+        timestamp_convert.timestamp_label_to_seconds(
+            typing.cast(spec.TimestampLabel, timestamp)
+        )
         return True
     except Exception:
         return False
 
 
-def is_timestamp_iso(timestamp):
+def is_timestamp_iso(
+    timestamp: spec.Timestamp,
+) -> TypeGuard[spec.TimestampISO]:
     """return bool of whether input is TimestampISO"""
     try:
-        convert.timestamp_iso_to_seconds(timestamp)
+        timestamp_convert.timestamp_iso_to_seconds(
+            typing.cast(spec.TimestampISO, timestamp)
+        )
         return True
     except Exception:
         return False
 
 
-def is_timestamp_datetime(timestamp):
+def is_timestamp_datetime(
+    timestamp: spec.Timestamp,
+) -> TypeGuard[spec.TimestampDatetime]:
     """return bool of whether input is TimestampDatetime"""
     return isinstance(timestamp, datetime.datetime)
 

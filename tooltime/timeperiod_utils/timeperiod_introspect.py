@@ -1,5 +1,5 @@
 from .. import timestamp_utils
-from . import convert
+from . import timeperiod_convert
 
 
 def print_timeperiod(
@@ -13,12 +13,14 @@ def print_timeperiod(
     - print_kwargs: kwargs passed to print()
     """
 
-    start, end = convert.timeperiod_to_pair(timeperiod)
+    start, end = timeperiod_convert.timeperiod_to_pair(timeperiod)
     start_label = timestamp_utils.convert_timestamp(
-        start, to_representation=timestamp_representation,
+        start,
+        to_representation=timestamp_representation,
     )
     end_label = timestamp_utils.convert_timestamp(
-        end, to_representation=timestamp_representation,
+        end,
+        to_representation=timestamp_representation,
     )
 
     if print_kwargs is None:

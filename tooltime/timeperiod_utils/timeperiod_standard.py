@@ -97,3 +97,82 @@ def get_standard_timeperiod(
 
     return {'start': start, 'end': end}
 
+
+def get_standard_intervals(
+    start_time=None,
+    end_time=None,
+    interval_size=None,
+    n_intervals=None,
+    window_size=None,
+):
+    """
+    ## Valid Inputs
+    - {start_time, end_time, interval_size}
+    - {start_time, interval_size, {n_intervals or window_size}}
+    - {end_time, interval_size, {n_intervals or window_size}}
+    - {interval_size, {n_intervals or window_size}}
+    - note that interval_size is always necessary
+    - cannot specify {start_time, end_time, {n_intervals or window_size}} because that won't be standardized
+    """
+
+    # validate inputs
+    if (
+        start_time is not None
+        and end_time is not None
+        and n_intervals is not None
+    ):
+        raise Exception(
+            'cannot specify {start_time, end_time, n_intervals} because that won\'t be standardized'
+        )
+
+    # use current time as default
+    if start_time is None and end_time is None:
+        end_time = timestamp_utils.create_timestamp()
+
+    date_range_kwargs = {}
+
+    # parse interval_size
+    if interval_size is not None:
+        date_range_kwargs[
+            'freq'
+        ] = timelength_utils.timelength_to_pandas_timelength(interval_size)
+
+    # parse n_intervals
+    if window_size is not None:
+        window_length = timelength_utils.timelength_to_seconds(window_size)
+        interval_length = timelength_utils.timelength_to_seconds(interval_size)
+        n_intervals = window_length / interval_length
+    if n_intervals is not None:
+        date_range_kwargs['periods'] = n_intervals
+
+    # parse start time
+    if start_time is not None:
+        timeperiod = get_standard_timeperiod(
+            timestamp=start_time,
+            timelength_label=timelength_utils.timelength_to_label(
+                interval_size
+            ),
+            include_end=True,
+        )
+        date_range_kwargs['start'] = timeperiod['start'] * 1000000000
+
+    # parse end time
+    if end_time is not None:
+        timeperiod = get_standard_timeperiod(
+            timestamp=end_time,
+            timelength_label=timelength_utils.timelength_to_label(
+                interval_size
+            ),
+            include_end=True,
+        )
+        date_range_kwargs['end'] = timeperiod['end'] * 1000000000
+
+    # create intervals
+    import pandas as pd
+    intervals = pd.date_range(**date_range_kwargs)
+
+    # extract timestamps
+    timestamps = [int(interval.timestamp()) for interval in intervals]
+
+    return timestamps
+

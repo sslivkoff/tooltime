@@ -47,3 +47,23 @@ def unit_letters_to_names():
     """return mapping {TimelengthLabel: english_name} for singular base units"""
     return {v[-1]: k for k, v in get_singular_unit_labels().items()}
 
+
+def get_english_to_pandas_units():
+    # https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#timeseries-offset-aliases
+    return {
+        'year': 'YS',
+        'years': 'YS',
+        'month': 'MS',
+        'months': 'MS',
+        'day': 'D',
+        'days': 'D',
+        'hour': 'H',
+        'hours': 'H',
+        'minute': 'T',
+        'minutes': 'T',
+    }
+
+
+def get_pandas_unit_to_english():
+    return {v: k for k, v in get_english_to_pandas_units().items()}
+

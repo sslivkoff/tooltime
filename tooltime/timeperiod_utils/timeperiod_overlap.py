@@ -1,21 +1,26 @@
 from .. import timelength_utils
-from . import crud
+from . import timeperiod_crud
 
 
 def timeperiods_overlap(timeperiod_lhs, timeperiod_rhs):
     """return bool of whether timeperiods have any overlap"""
-    start_lhs, end_lhs = crud.compute_timeperiod_start_end(timeperiod_lhs)
-    start_rhs, end_rhs = crud.compute_timeperiod_start_end(timeperiod_rhs)
-    return (
-        (start_lhs <= start_rhs <= end_lhs)
-        or (start_lhs <= end_rhs <= end_lhs)
+    start_lhs, end_lhs = timeperiod_crud.compute_timeperiod_start_end(
+        timeperiod_lhs
+    )
+    start_rhs, end_rhs = timeperiod_crud.compute_timeperiod_start_end(
+        timeperiod_rhs
+    )
+    return (start_lhs <= start_rhs <= end_lhs) or (
+        start_lhs <= end_rhs <= end_lhs
     )
 
 
 def timeperiod_contains(timeperiod, other_timeperiod):
     """return bool of whether timeperiod contains other timeperiod"""
-    start, end = crud.compute_timeperiod_start_end(timeperiod)
-    other_start, other_end = crud.compute_timeperiod_start_end(other_timeperiod)
+    start, end = timeperiod_crud.compute_timeperiod_start_end(timeperiod)
+    other_start, other_end = timeperiod_crud.compute_timeperiod_start_end(
+        other_timeperiod
+    )
     return (start <= other_start) and (end >= other_end)
 
 
@@ -24,7 +29,7 @@ def create_superset_timeperiod(*timeperiods):
     min_start = float('inf')
     max_end = float('-inf')
     for timeperiod in timeperiods:
-        start, end = crud.compute_timeperiod_start_end(timeperiod)
+        start, end = timeperiod_crud.compute_timeperiod_start_end(timeperiod)
         if start < min_start:
             min_start = start
         if end > max_end:
@@ -59,7 +64,7 @@ def create_overlapping_timeperiod(
     - extend_end_absolute: Timelength amount of time to extend at end
     """
 
-    start, end = crud.compute_timeperiod_start_end(timeperiod)
+    start, end = timeperiod_crud.compute_timeperiod_start_end(timeperiod)
     length = end - start
     new_start = start
     new_end = end

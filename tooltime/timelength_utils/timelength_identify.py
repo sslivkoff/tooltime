@@ -1,7 +1,7 @@
 import datetime
 
 from .. import exceptions
-from . import units
+from . import timelength_units
 
 
 def detect_timelength_representation(timelength):
@@ -80,7 +80,7 @@ def is_timelength_phrase(timelength):
 
     if not isinstance(timelength, str):
         return False
-    unit_names_to_labels = units.get_unit_labels()
+    unit_names_to_labels = timelength_units.get_unit_labels()
     pieces = timelength.split(', ')
     try:
         for piece in pieces:

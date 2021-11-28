@@ -1,8 +1,8 @@
 import datetime
 import math
 
-from . import units
-from . import identify
+from . import timelength_units
+from . import timelength_identify
 
 
 #
@@ -24,8 +24,8 @@ def convert_timelength(timelength, to_representation, from_representation=None):
 
     # detect timelength type
     if from_representation is None:
-        from_representation = identify.detect_timelength_representation(
-            timelength
+        from_representation = (
+            timelength_identify.detect_timelength_representation(timelength)
         )
 
     # return if already in target type
@@ -214,7 +214,7 @@ def timelength_seconds_to_label(
             seconds = int_seconds
 
     # collect possible base units
-    base_units = units.get_base_units()
+    base_units = timelength_units.get_base_units()
     if base_unit is not None:
         if base_unit not in base_units:
             raise Exception('invalid base unit: ' + str(base_unit))
@@ -261,7 +261,7 @@ def timelength_seconds_to_label(
 
 def timelength_seconds_to_clock(timelength_seconds):
     """convert seconds to TimelengthClock"""
-    base_units = units.get_base_units()
+    base_units = timelength_units.get_base_units()
     n_days = math.floor(timelength_seconds / base_units['1d'])
     n_seconds_remaining = timelength_seconds % base_units['1d']
     clock = str(datetime.timedelta(seconds=n_seconds_remaining))
@@ -283,8 +283,8 @@ def timelength_seconds_to_phrase(timelength_seconds):
 
     # compute count for each unit
     remaining = timelength_seconds
-    base_units = units.get_base_units()
-    unit_names_to_labels = units.get_unit_labels()
+    base_units = timelength_units.get_base_units()
+    unit_names_to_labels = timelength_units.get_unit_labels()
     unit_counts = []
     for unit_name in unit_names:
         unit_seconds = base_units[unit_names_to_labels[unit_name]]
@@ -313,7 +313,7 @@ def timelength_seconds_to_phrase(timelength_seconds):
 def timelength_seconds_to_clock_phrase(timelength_seconds):
     """convert seconds to TimelengthClockPhrase"""
 
-    base_units = units.get_base_units()
+    base_units = timelength_units.get_base_units()
     n_years = math.floor(timelength_seconds / base_units['1y'])
     n_years_remainder = timelength_seconds % base_units['1y']
     n_days = math.floor(n_years_remainder / base_units['1d'])
@@ -348,7 +348,7 @@ def timelength_label_to_seconds(timelength_label):
     """convert TimelengthLabel to seconds"""
     number = int(timelength_label[:-1])
     letter = timelength_label[-1]
-    base_units = units.get_base_units()
+    base_units = timelength_units.get_base_units()
     base_seconds = base_units['1' + letter]
     seconds = number * base_seconds
     return seconds
@@ -372,7 +372,7 @@ def timelength_clock_to_seconds(timelength_clock):
     else:
         raise Exception('unknown timelength clock format')
 
-    base_units = units.get_base_units()
+    base_units = timelength_units.get_base_units()
     return (
         base_units['1d'] * days
         + base_units['1h'] * hours
@@ -384,8 +384,8 @@ def timelength_clock_to_seconds(timelength_clock):
 def timelength_phrase_to_seconds(timelength_phrase):
     """convert TimelengthPhrase to seconds"""
 
-    bases = units.get_base_units()
-    unit_names_to_labels = units.get_unit_labels()
+    bases = timelength_units.get_base_units()
+    unit_names_to_labels = timelength_units.get_unit_labels()
     phrase_pieces = timelength_phrase.split(', ')
 
     seconds = 0
@@ -413,4 +413,17 @@ def timelength_clock_phrase_to_seconds(timelength_clock_phrase):
 def timelength_timedelta_to_seconds(timelength_timedelta):
     """convert TimelengthTimedelta to seconds"""
     return timelength_timedelta.total_seconds()
+
+
+#
+# # special conversions
+#
+
+
+def timelength_to_pandas_timelength(timelength):
+    timelength_label = timelength_to_label(timelength)
+    number = timelength_label[:-1]
+    unit_name = timelength_units.unit_letters_to_names()[timelength_label[-1]]
+    pandas_unit = timelength_units.get_english_to_pandas_units()[unit_name]
+    return number + pandas_unit
 

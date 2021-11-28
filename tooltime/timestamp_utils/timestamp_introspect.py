@@ -1,31 +1,41 @@
+import typing
+
+from .. import spec
 from .. import timefrequency_utils
 from .. import timelength_utils
-from . import convert
+from . import timestamp_convert
 
 
-def summarize_timestamps(timestamps):
+def summarize_timestamps(
+    timestamps: typing.Sequence[spec.Timestamp],
+) -> spec.TimestampSummary:
     """create summary of timestamps
 
     ## Inputs
     - timestamps: iterable of Timestamp
     """
 
+    timestamps_precise: typing.List[spec.TimestampSecondsPrecise] = []
+    for timestamp in timestamps:
+        precise = timestamp_convert.timestamp_to_seconds_precise(timestamp)
+        timestamps_precise.append(precise)
+
     n_t = len(timestamps)
-    summary = {'n_t': n_t}
+    summary: spec.TimestampSummary = {'n_t': n_t}
 
     if n_t == 1:
-        summary['start'] = timestamps[0]
-        summary['end'] = timestamps[0]
+        summary['start'] = timestamps_precise[0]
+        summary['end'] = timestamps_precise[0]
 
     elif n_t > 1:
-        if timestamps[-1] < timestamps[0]:
-            timestamps = timestamps[::-1]
+        if timestamps_precise[-1] < timestamps_precise[0]:
+            timestamps_precise = timestamps_precise[::-1]
 
-        n_unique = len(set(timestamps))
-        resolution = timefrequency_utils.detect_resolution(timestamps)
-        start = convert.timestamp_to_label(timestamps[0])
-        end = convert.timestamp_to_label(timestamps[-1])
-        duration = timestamps[-1] - timestamps[0]
+        n_unique = len(set(timestamps_precise))
+        resolution = timefrequency_utils.detect_resolution(timestamps_precise)
+        start = timestamp_convert.timestamp_to_label(timestamps_precise[0])
+        end = timestamp_convert.timestamp_to_label(timestamps_precise[-1])
+        duration = timestamps_precise[-1] - timestamps_precise[0]
         duration_label = timelength_utils.timelength_seconds_to_clock_phrase(
             duration
         )
@@ -34,15 +44,17 @@ def summarize_timestamps(timestamps):
         n_outliers = n_large_outliers + n_small_outliers
 
         if resolution['median_dt'] > 0.0001:
-            n_ideal = range(
-                timestamps[0],
-                timestamps[-1] + resolution['median_dt'],
+            import numpy as np
+
+            n_ideal_iter = np.arange(
+                timestamps_precise[0],
+                timestamps_precise[-1] + resolution['median_dt'],
                 resolution['median_dt'],
             )
-            n_ideal = list(n_ideal)
-            n_missing = len(n_ideal) - len(timestamps)
+            n_ideal = list(n_ideal_iter)
+            summary['n_missing'] = len(n_ideal) - len(timestamps_precise)
         else:
-            n_missing = 'median dt <= 0.0001'
+            summary['n_missing'] = None
 
         summary['n_unique'] = n_unique
         summary['resolution'] = resolution
@@ -53,13 +65,16 @@ def summarize_timestamps(timestamps):
         summary['n_large_outliers'] = n_large_outliers
         summary['n_small_outliers'] = n_small_outliers
         summary['n_outliers'] = n_outliers
-        summary['n_missing'] = n_missing
 
     return summary
 
 
 def print_timestamp_summary(
-    *, timestamps=None, summary=None, indent=None, print_kwargs=None
+    *,
+    timestamps: typing.List[spec.Timestamp] = None,
+    summary: typing.Optional[spec.TimestampSummary] = None,
+    indent: typing.Optional[str] = None,
+    print_kwargs: dict[str, typing.Any] = None
 ):
     """print summary of timestamps
 
@@ -75,8 +90,6 @@ def print_timestamp_summary(
     """
 
     # validate inputs
-    if summary is None and timestamps is None:
-        raise Exception('must specify timestamps or summary')
     if indent is None:
         indent = ''
     if print_kwargs is None:
@@ -84,6 +97,8 @@ def print_timestamp_summary(
 
     # create summary if not provided
     if summary is None:
+        if timestamps is None:
+            raise Exception('must specify timestamps or summary')
         summary = summarize_timestamps(timestamps)
 
     n_t = summary['n_t']
@@ -112,13 +127,13 @@ def print_timestamp_summary(
         print(
             '    ' + indent + 'start:',
             start,
-            '(' + ('%.14g' % timestamps[0]) + ')',
+            '(' + ('%.14g' % summary['start']) + ')',
             **print_kwargs
         )
         print(
             '    ' + indent + 'end:  ',
             end,
-            '(' + ('%.14g' % timestamps[-1]) + ')',
+            '(' + ('%.14g' % summary['end']) + ')',
             **print_kwargs
         )
         print(

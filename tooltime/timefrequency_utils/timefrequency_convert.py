@@ -1,9 +1,11 @@
 from .. import timelength_utils
-from . import identify
+from . import timefrequency_identify
 
 
 def convert_timefrequency(
-    timefrequency, to_representation, from_representation=None,
+    timefrequency,
+    to_representation,
+    from_representation=None,
 ):
     """convert Timefrequency to a new representation
 
@@ -18,8 +20,10 @@ def convert_timefrequency(
 
     # determine current representation
     if from_representation is None:
-        from_representation = identify.detect_timefrequency_representation(
-            timefrequency
+        from_representation = (
+            timefrequency_identify.detect_timefrequency_representation(
+                timefrequency
+            )
         )
 
     # check whether conversion is required
@@ -57,8 +61,10 @@ def timefrequency_to_frequency(timefrequency, from_representation=None):
     """
 
     if from_representation is None:
-        from_representation = identify.detect_timefrequency_representation(
-            timefrequency
+        from_representation = (
+            timefrequency_identify.detect_timefrequency_representation(
+                timefrequency
+            )
         )
 
     if from_representation == 'TimefrequencyFrequency':
@@ -91,7 +97,9 @@ def timefrequency_to_count_per(timefrequency, from_representation=None):
     """
 
     if from_representation is None:
-        from_representation = identify.detect_timefrequency_representation()
+        from_representation = (
+            timefrequency_identify.detect_timefrequency_representation()
+        )
 
     if from_representation == 'TimefrequencyFrequency':
         return {'count': timefrequency, 'per': '1s'}
@@ -117,7 +125,9 @@ def timefrequency_to_interval(timefrequency, from_representation=None):
     """
 
     if from_representation is None:
-        from_representation = identify.detect_timefrequency_representation()
+        from_representation = (
+            timefrequency_identify.detect_timefrequency_representation()
+        )
 
     if from_representation == 'TimefrequencyFrequency':
         return {'interval': 1 / float(timefrequency)}

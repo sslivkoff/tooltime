@@ -1,4 +1,4 @@
-from . import convert
+from . import timelength_convert
 
 
 def create_timelength(seconds, to_representation=None):
@@ -47,25 +47,25 @@ def create_timelength_seconds_precise(seconds):
 
 def create_timelength_label(seconds):
     """create Timelength with representation TimelengthLabel"""
-    return convert.timelength_seconds_to_label(seconds)
+    return timelength_convert.timelength_seconds_to_label(seconds)
 
 
 def create_timelength_phrase(seconds):
     """create Timelength with representation TimelengthPhrase"""
-    return convert.timelength_seconds_to_phrase(seconds)
+    return timelength_convert.timelength_seconds_to_phrase(seconds)
 
 
 def create_timelength_clock(seconds):
     """create Timelength with representation TimelengthClock"""
-    return convert.timelength_seconds_to_clock(seconds)
+    return timelength_convert.timelength_seconds_to_clock(seconds)
 
 
 def create_timelength_clock_phrase(seconds):
     """create Timelength with representation TimelengthClockPhrase"""
-    return convert.timelength_seconds_to_clock_phrase(seconds)
+    return timelength_convert.timelength_seconds_to_clock_phrase(seconds)
 
 
 def create_timelength_timedelta(seconds):
     """create Timelength with representation TimelengthTimedelta"""
-    return convert.timelength_seconds_to_timedelta(seconds)
+    return timelength_convert.timelength_seconds_to_timedelta(seconds)
 

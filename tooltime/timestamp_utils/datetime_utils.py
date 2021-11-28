@@ -1,5 +1,12 @@
+import datetime
 
-def floor_datetime(dt, precision):
+from .. import spec
+
+
+def floor_datetime(
+    dt: datetime.datetime,
+    precision: spec.DatetimeUnit,
+) -> datetime.datetime:
     """take floor of datetime down to a given level of precision
 
     ## Inputs
@@ -8,7 +15,14 @@ def floor_datetime(dt, precision):
     """
 
     if precision == 'year':
-        remove = ['month', 'day', 'hour', 'minute', 'second', 'microsecond']
+        remove: list[spec.DatetimeUnit] = [
+            'month',
+            'day',
+            'hour',
+            'minute',
+            'second',
+            'microsecond',
+        ]
     elif precision == 'month':
         remove = ['day', 'hour', 'minute', 'second', 'microsecond']
     elif precision == 'day':
@@ -19,19 +33,20 @@ def floor_datetime(dt, precision):
         remove = ['second', 'microsecond']
     elif precision == 'second':
         remove = ['microsecond']
+    elif precision == 'microsecond':
+        return dt
     else:
         raise Exception('unknown precision: ' + str(precision))
 
-    unit_values = {
-        unit_name: get_unit_lowest_value(unit_name)
-        for unit_name in remove
+    unit_values: dict[str, int] = {
+        unit_name: get_unit_lowest_value(unit_name) for unit_name in remove
     }
-    dt = dt.replace(**unit_values)
+    dt = dt.replace(tzinfo=dt.tzinfo, **unit_values)
 
     return dt
 
 
-def get_unit_lowest_value(datetime_unit):
+def get_unit_lowest_value(datetime_unit: spec.DatetimeUnit) -> int:
     """return lowest value for given unit"""
 
     lowest_values = {

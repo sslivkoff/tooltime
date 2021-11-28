@@ -1,4 +1,4 @@
-from . import identify
+from . import timeperiod_identify
 
 
 def convert_timeperiod(timeperiod, to_representation, from_representation=None):
@@ -15,8 +15,8 @@ def convert_timeperiod(timeperiod, to_representation, from_representation=None):
 
     # determine current representation
     if from_representation is None:
-        from_representation = identify.detect_timeperiod_representation(
-            timeperiod
+        from_representation = (
+            timeperiod_identify.detect_timeperiod_representation(timeperiod)
         )
 
     # check whether conversion is required
@@ -50,8 +50,8 @@ def timeperiod_to_pair(timeperiod, from_representation=None):
     """
 
     if from_representation is None:
-        from_representation = identify.detect_timeperiod_representation(
-            timeperiod
+        from_representation = (
+            timeperiod_identify.detect_timeperiod_representation(timeperiod)
         )
 
     if from_representation == 'TimeperiodMap':
@@ -76,8 +76,10 @@ def timeperiod_to_map(timeperiod, from_representation=None):
     - TimeperiodMap
     """
     if from_representation is None:
-        from_representation = identify.detect_timeperiod_representation(
-            timeperiod,
+        from_representation = (
+            timeperiod_identify.detect_timeperiod_representation(
+                timeperiod,
+            )
         )
 
     if from_representation == 'TimeperiodPair':

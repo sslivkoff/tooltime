@@ -1,5 +1,92 @@
 import datetime
+import typing
 
+
+TimestampSecondsRaw = typing.SupportsFloat
+TimestampSeconds = int
+TimestampSecondsPrecise = float
+TimestampLabel = str
+TimestampISO = str
+TimestampDatetime = datetime.datetime
+Timestamp = typing.Union[
+    TimestampSeconds,
+    TimestampSecondsPrecise,
+    TimestampLabel,
+    TimestampISO,
+    TimestampDatetime,
+]
+TimestampRepresentation = typing.Literal[
+    'TimestampSeconds',
+    'TimestampSecondsPrecise',
+    'TimestampLabel',
+    'TimestampISO',
+    'TimestampDatetime',
+]
+
+TimestampSummary = dict[str, typing.Any]
+
+TimelengthSeconds = int
+TimelengthSecondsPrecise = float
+TimelengthLabel = str
+TimelengthClock = str
+TimelengthPhrase = str
+TimelengthClockPhrase = str
+TimelengthTimedelta = datetime.timedelta
+Timelength = typing.Union[
+    TimelengthSeconds,
+    TimelengthSecondsPrecise,
+    TimelengthLabel,
+    TimelengthClock,
+    TimelengthPhrase,
+    TimelengthClockPhrase,
+    TimelengthTimedelta,
+]
+
+
+class TimeperiodMap(typing.TypedDict):
+    start: Timestamp
+    end: Timestamp
+
+
+TimeperiodPair = tuple[Timestamp, Timestamp]
+Timeperiod = typing.Union[TimeperiodMap, TimeperiodPair]
+
+TimefreqeuncyFrequency = typing.Union[int, float]
+
+
+class TimefrequencyCountPer(typing.TypedDict):
+    count: typing.Union[int, float]
+    per: Timestamp
+
+
+class TimefrequencyInterval(typing.TypedDict):
+    interval: Timestamp
+
+
+Timefrequency = typing.Union[
+    TimefreqeuncyFrequency,
+    TimefrequencyCountPer,
+    TimefrequencyInterval,
+]
+
+#
+# # datetime
+#
+
+DatetimeUnit = typing.Literal[
+    'year',
+    'month',
+    'day',
+    'hour',
+    'minute',
+    'second',
+    'microsecond',
+]
+
+
+#
+# # old
+#
 
 contenttypes = {
     # Timestamp
@@ -15,7 +102,6 @@ contenttypes = {
     'TimestampLabel': 'Text',
     'TimestampISO': 'Text',
     'TimestampDatetime': 'Datetime',
-
     # Timelength
     'Timelength': [
         'TimelengthSeconds',
@@ -33,15 +119,10 @@ contenttypes = {
     'TimelengthPhrase': 'Text',
     'TimelengthClockPhrase': 'Text',
     'TimelengthTimedelta': 'Timedelta',
-
     # Timeperiod
-    'Timeperiod': [
-        'TimeperiodMap',
-        'TimeperiodPair'
-    ],
+    'Timeperiod': ['TimeperiodMap', 'TimeperiodPair'],
     'TimeperiodMap': {'start': 'Timestamp', 'end': 'Timestamp'},
     'TimeperiodPair': ['Timestamp', 'Timestamp'],
-
     # Timefrequency
     'Timefrequency': [
         'TimefrequencyFrequency',
