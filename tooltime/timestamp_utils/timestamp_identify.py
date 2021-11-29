@@ -37,21 +37,21 @@ def is_timestamp(timestamp: typing.Any) -> TypeGuard[spec.Timestamp]:
 
 
 def is_timestamp_seconds(
-    timestamp: spec.Timestamp,
+    timestamp: typing.Any,
 ) -> TypeGuard[spec.TimestampSeconds]:
     """return bool of whether input is TimestampSeconds"""
     return isinstance(timestamp, int)
 
 
 def is_timestamp_seconds_precise(
-    timestamp: spec.Timestamp,
+    timestamp: typing.Any,
 ) -> TypeGuard[spec.TimestampSecondsPrecise]:
     """return bool of whether input is TimestampSecondsPrecise"""
     return isinstance(timestamp, float)
 
 
 def is_timestamp_label(
-    timestamp: spec.Timestamp,
+    timestamp: typing.Any,
 ) -> TypeGuard[spec.TimestampLabel]:
     """return bool of whether input is TimestampLabel"""
     try:
@@ -64,7 +64,7 @@ def is_timestamp_label(
 
 
 def is_timestamp_iso(
-    timestamp: spec.Timestamp,
+    timestamp: typing.Any,
 ) -> TypeGuard[spec.TimestampISO]:
     """return bool of whether input is TimestampISO"""
     try:
@@ -77,7 +77,7 @@ def is_timestamp_iso(
 
 
 def is_timestamp_datetime(
-    timestamp: spec.Timestamp,
+    timestamp: typing.Any,
 ) -> TypeGuard[spec.TimestampDatetime]:
     """return bool of whether input is TimestampDatetime"""
     return isinstance(timestamp, datetime.datetime)

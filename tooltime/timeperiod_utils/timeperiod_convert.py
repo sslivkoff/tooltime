@@ -1,7 +1,32 @@
+import typing
+
+from .. import spec
 from . import timeperiod_identify
 
 
-def convert_timeperiod(timeperiod, to_representation, from_representation=None):
+@typing.overload
+def convert_timeperiod(
+    timeperiod: spec.Timeperiod,
+    to_representation: typing.Literal['TimeperiodPair'],
+    from_representation: typing.Optional[spec.TimeperiodRepresentation],
+) -> spec.TimeperiodPair:
+    ...
+
+
+@typing.overload
+def convert_timeperiod(
+    timeperiod: spec.Timeperiod,
+    to_representation: typing.Literal['TimeperiodMap'],
+    from_representation: typing.Optional[spec.TimeperiodRepresentation],
+) -> spec.TimeperiodMap:
+    ...
+
+
+def convert_timeperiod(
+    timeperiod: spec.Timeperiod,
+    to_representation: spec.TimeperiodRepresentation,
+    from_representation: typing.Optional[spec.TimeperiodRepresentation] = None,
+) -> spec.Timeperiod:
     """convert Timeperiod to a new representation
 
     ## Inputs
@@ -38,7 +63,10 @@ def convert_timeperiod(timeperiod, to_representation, from_representation=None):
         )
 
 
-def timeperiod_to_pair(timeperiod, from_representation=None):
+def timeperiod_to_pair(
+    timeperiod: spec.Timeperiod,
+    from_representation: spec.TimeperiodRepresentation = None,
+) -> spec.TimeperiodPair:
     """convert Timeperiod to TimeperiodPair
 
     ## Inputs
@@ -49,23 +77,23 @@ def timeperiod_to_pair(timeperiod, from_representation=None):
     - TimeperiodPair
     """
 
-    if from_representation is None:
+    if timeperiod_identify.is_timeperiod_map(timeperiod):
+        return (timeperiod['start'], timeperiod['end'])
+    elif timeperiod_identify.is_timeperiod_pair(timeperiod):
+        return timeperiod
+    else:
         from_representation = (
             timeperiod_identify.detect_timeperiod_representation(timeperiod)
         )
-
-    if from_representation == 'TimeperiodMap':
-        start, end = timeperiod
-        return [timeperiod['start'], timeperiod['end']]
-    elif from_representation == 'TimeperiodPair':
-        return timeperiod
-    else:
         raise Exception(
             'unknown Timeperiod representation: ' + str(from_representation)
         )
 
 
-def timeperiod_to_map(timeperiod, from_representation=None):
+def timeperiod_to_map(
+    timeperiod: spec.Timeperiod,
+    from_representation: spec.TimeperiodRepresentation = None,
+) -> spec.TimeperiodMap:
     """convert Timeperiod to TimeperiodMap
 
     ## Inputs
@@ -75,19 +103,16 @@ def timeperiod_to_map(timeperiod, from_representation=None):
     ## Returns
     - TimeperiodMap
     """
-    if from_representation is None:
-        from_representation = (
-            timeperiod_identify.detect_timeperiod_representation(
-                timeperiod,
-            )
-        )
 
-    if from_representation == 'TimeperiodPair':
+    if timeperiod_identify.is_timeperiod_pair(timeperiod):
         start, end = timeperiod
         return {'start': start, 'end': end}
-    elif from_representation == 'TimeperiodMap':
+    elif timeperiod_identify.is_timeperiod_map(timeperiod):
         return timeperiod
     else:
+        from_representation = (
+            timeperiod_identify.detect_timeperiod_representation(timeperiod)
+        )
         raise Exception(
             'unknown Timeperiod representation: ' + str(from_representation)
         )

@@ -1,21 +1,23 @@
 import datetime
 import math
+import typing
 
+from .. import spec
 from .. import timelength_utils
 from .. import timestamp_utils
 
 
 def get_standard_timeperiod(
-    standard_timeperiod_spec=None,
+    # standard_timeperiod_spec=None,
     *,
-    timelength_label=None,
-    block_unit=None,
-    block_size=None,
-    timestamp=None,
-    include_start=True,
-    include_end=False,
-    boundary_unit='second',
-):
+    timelength_label: spec.TimelengthLabel = None,
+    block_unit: typing.Optional[spec.DatetimeUnit] = None,
+    block_size: typing.Optional[int] = None,
+    timestamp: typing.Optional[spec.Timestamp] = None,
+    include_start: bool = True,
+    include_end: bool = False,
+    boundary_unit: spec.DatetimeUnit = 'second',
+) -> spec.TimeperiodMapSeconds:
     """get standardized Timeperiod that contains a specific Timestamp
 
     ## Standardized Timeperiods
@@ -42,21 +44,33 @@ def get_standard_timeperiod(
     - boundary_unit: str name of boundary unit to be shaved off open intervals
     """
 
-    if standard_timeperiod_spec is not None:
-        if isinstance(standard_timeperiod_spec, str):
-            kwargs = {'timelength_label': standard_timeperiod_spec}
-        else:
-            kwargs = standard_timeperiod_spec
-        return get_standard_timeperiod(**kwargs)
+    # if standard_timeperiod_spec is not None:
+    #     if isinstance(standard_timeperiod_spec, str):
+    #         kwargs = {'timelength_label': standard_timeperiod_spec}
+    #     elif isinstance(standard_timeperiod_spec, dict[str, typing.Any]):
+    #         kwargs = standard_timeperiod_spec
+    #     else:
+    #         raise Exception('unkno')
+    #     return get_standard_timeperiod(**kwargs)
 
-    if (timelength_label is not None) + (block_unit is not None) != 1:
+    if (timelength_label is not None) and (block_unit is not None):
         raise Exception('must specify either timelength_label or block_unit')
-    if timelength_label is not None:
+    elif (timelength_label is None) and (block_unit is not None):
+        if block_size is None:
+            block_size = 1
+    elif (timelength_label is not None) and (block_unit is None):
         block_size = int(timelength_label[:-1])
-        unit_letters_to_names = timelength_utils.unit_letters_to_names()
+        unit_letters_to_names = (
+            timelength_utils.datetime_unit_letters_to_names()
+        )
         block_unit = unit_letters_to_names[timelength_label[-1]]
-    if block_unit is not None and block_size is None:
-        block_size = 1
+    elif (timelength_label is None) and (block_unit is None):
+        raise Exception()
+    else:
+        raise Exception()
+
+    if block_unit is None:
+        raise Exception('block_unit must be set')
 
     # create timestamp datetime
     if timestamp is not None:
@@ -70,7 +84,8 @@ def get_standard_timeperiod(
     current_block = math.floor((current_unit - lowest_unit_value) / block_size)
     from_unit = current_block * block_size + lowest_unit_value
     from_datetime = timestamp_utils.floor_datetime(dt, block_unit)
-    from_datetime = from_datetime.replace(**{block_unit: from_unit})
+    kwargs: dict[str, int] = {str(block_unit): from_unit}
+    from_datetime = from_datetime.replace(tzinfo=from_datetime.tzinfo, **kwargs)
 
     # compute to_datetime
     if block_unit == 'month':
@@ -92,19 +107,19 @@ def get_standard_timeperiod(
         to_datetime = to_datetime - timedelta
 
     # get timestamps
-    start = from_datetime.timestamp()
-    end = to_datetime.timestamp()
+    start = int(from_datetime.timestamp())
+    end = int(to_datetime.timestamp())
 
     return {'start': start, 'end': end}
 
 
 def get_standard_intervals(
-    start_time=None,
-    end_time=None,
-    interval_size=None,
-    n_intervals=None,
-    window_size=None,
-):
+    interval_size: typing.SupportsFloat,
+    start_time: typing.Optional[spec.Timestamp] = None,
+    end_time: typing.Optional[spec.Timestamp] = None,
+    n_intervals: typing.Optional[int] = None,
+    window_size: typing.Optional[typing.SupportsFloat] = None,
+) -> list[spec.TimestampSeconds]:
     """
     ## Valid Inputs
     - {start_time, end_time, interval_size}
@@ -129,19 +144,21 @@ def get_standard_intervals(
     if start_time is None and end_time is None:
         end_time = timestamp_utils.create_timestamp()
 
-    date_range_kwargs = {}
+    date_range_kwargs: dict[str, typing.Any] = {}
 
     # parse interval_size
     if interval_size is not None:
         date_range_kwargs[
             'freq'
-        ] = timelength_utils.timelength_to_pandas_timelength(interval_size)
+        ] = timelength_utils.timelength_to_pandas_timelength(
+            spec.to_numeric(interval_size)
+        )
 
     # parse n_intervals
     if window_size is not None:
-        window_length = timelength_utils.timelength_to_seconds(window_size)
-        interval_length = timelength_utils.timelength_to_seconds(interval_size)
-        n_intervals = window_length / interval_length
+        window_length = spec.to_numeric(window_size)
+        interval_length = spec.to_numeric(interval_size)
+        n_intervals = int(window_length / interval_length)
     if n_intervals is not None:
         date_range_kwargs['periods'] = n_intervals
 
@@ -150,7 +167,7 @@ def get_standard_intervals(
         timeperiod = get_standard_timeperiod(
             timestamp=start_time,
             timelength_label=timelength_utils.timelength_to_label(
-                interval_size
+                spec.to_numeric(interval_size)
             ),
             include_end=True,
         )
@@ -161,7 +178,7 @@ def get_standard_intervals(
         timeperiod = get_standard_timeperiod(
             timestamp=end_time,
             timelength_label=timelength_utils.timelength_to_label(
-                interval_size
+                spec.to_numeric(interval_size)
             ),
             include_end=True,
         )
@@ -169,6 +186,7 @@ def get_standard_intervals(
 
     # create intervals
     import pandas as pd
+
     intervals = pd.date_range(**date_range_kwargs)
 
     # extract timestamps

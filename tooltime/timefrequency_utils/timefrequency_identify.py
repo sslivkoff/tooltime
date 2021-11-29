@@ -1,8 +1,13 @@
+import typing
+
 from .. import exceptions
+from .. import spec
 from .. import timelength_utils
 
 
-def detect_timefrequency_representation(timefrequency):
+def detect_timefrequency_representation(
+    timefrequency: typing.Any,
+) -> spec.TimefrequencyRepresentation:
     """return str name of Timefrequency representation"""
     if is_timefrequency_frequency(timefrequency):
         return 'TimefrequencyFrequency'

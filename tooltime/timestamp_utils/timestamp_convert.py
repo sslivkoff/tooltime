@@ -18,7 +18,7 @@ precise_time_format = time_format[:-1] + '%f' + time_format[-1]
 def convert_timestamp(
     timestamp: spec.Timestamp,
     to_representation: typing.Literal['TimestampSeconds'],
-    from_representation: typing.Optional[spec.TimestampRepresentation],
+    from_representation: typing.Optional[spec.TimestampRepresentation] = None,
 ) -> spec.TimestampSeconds:
     ...
 
@@ -27,7 +27,7 @@ def convert_timestamp(
 def convert_timestamp(
     timestamp: spec.Timestamp,
     to_representation: typing.Literal['TimestampSecondsPrecise'],
-    from_representation: typing.Optional[spec.TimestampRepresentation],
+    from_representation: typing.Optional[spec.TimestampRepresentation] = None,
 ) -> spec.TimestampSecondsPrecise:
     ...
 
@@ -36,7 +36,7 @@ def convert_timestamp(
 def convert_timestamp(
     timestamp: spec.Timestamp,
     to_representation: typing.Literal['TimestampLabel'],
-    from_representation: typing.Optional[spec.TimestampRepresentation],
+    from_representation: typing.Optional[spec.TimestampRepresentation] = None,
 ) -> spec.TimestampLabel:
     ...
 
@@ -45,7 +45,7 @@ def convert_timestamp(
 def convert_timestamp(
     timestamp: spec.Timestamp,
     to_representation: typing.Literal['TimestampISO'],
-    from_representation: typing.Optional[spec.TimestampRepresentation],
+    from_representation: typing.Optional[spec.TimestampRepresentation] = None,
 ) -> spec.TimestampISO:
     ...
 
@@ -54,7 +54,7 @@ def convert_timestamp(
 def convert_timestamp(
     timestamp: spec.Timestamp,
     to_representation: typing.Literal['TimestampDatetime'],
-    from_representation: typing.Optional[spec.TimestampRepresentation],
+    from_representation: typing.Optional[spec.TimestampRepresentation] = None,
 ) -> spec.TimestampDatetime:
     ...
 
@@ -306,4 +306,16 @@ def timestamp_datetime_to_seconds(
 ) -> spec.TimestampSecondsRaw:
     """convert TimestampDatetime to seconds"""
     return timestamp_datetime.timestamp()
+
+
+def timestamp_to_numerical(
+    timestamp: spec.Timestamp,
+) -> typing.Union[spec.TimestampSeconds, spec.TimestampSecondsPrecise]:
+    if type(timestamp).__name__.startswith('int'):
+        if isinstance(timestamp, typing.SupportsInt):
+            return int(timestamp)
+        else:
+            raise Exception('bad type: ' + str(type(timestamp)))
+    else:
+        return timestamp_to_seconds_precise(timestamp)
 

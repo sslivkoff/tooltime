@@ -2,6 +2,9 @@ import datetime
 import typing
 
 
+#
+# # timestamp
+#
 TimestampSecondsRaw = typing.SupportsFloat
 TimestampSeconds = int
 TimestampSecondsPrecise = float
@@ -25,6 +28,12 @@ TimestampRepresentation = typing.Literal[
 
 TimestampSummary = dict[str, typing.Any]
 
+
+#
+# # timelength
+#
+
+TimelengthSecondsRaw = typing.Union[int, float]
 TimelengthSeconds = int
 TimelengthSecondsPrecise = float
 TimelengthLabel = str
@@ -41,6 +50,22 @@ Timelength = typing.Union[
     TimelengthClockPhrase,
     TimelengthTimedelta,
 ]
+TimelengthRepresentation = typing.Literal[
+    'TimelengthSeconds',
+    'TimelengthSecondsPrecise',
+    'TimelengthLabel',
+    'TimelengthClock',
+    'TimelengthPhrase',
+    'TimelengthClockPhrase',
+    'TimelengthTimedelta',
+]
+
+TimelengthPandas = str
+
+
+#
+# # timeperiod
+#
 
 
 class TimeperiodMap(typing.TypedDict):
@@ -48,8 +73,23 @@ class TimeperiodMap(typing.TypedDict):
     end: Timestamp
 
 
+class TimeperiodMapSeconds(typing.TypedDict):
+    start: TimestampSeconds
+    end: TimestampSeconds
+
+
 TimeperiodPair = tuple[Timestamp, Timestamp]
 Timeperiod = typing.Union[TimeperiodMap, TimeperiodPair]
+
+TimeperiodRepresentation = typing.Literal[
+    'TimeperiodPair',
+    'TimeperiodMap',
+]
+
+
+#
+# # timefrequency
+#
 
 TimefreqeuncyFrequency = typing.Union[int, float]
 
@@ -69,6 +109,13 @@ Timefrequency = typing.Union[
     TimefrequencyInterval,
 ]
 
+TimefrequencyRepresentation = typing.Literal[
+    'TimefrequencyFrequency',
+    'TimefrequencyCountPer',
+    'TimefrequencyInterval',
+]
+
+
 #
 # # datetime
 #
@@ -82,6 +129,49 @@ DatetimeUnit = typing.Literal[
     'second',
     'microsecond',
 ]
+
+SingularTimeUnit = typing.Literal[
+    'year',
+    'month',
+    'week',
+    'day',
+    'hour',
+    'minute',
+    'second',
+    'microsecond',
+]
+
+PluralTimeUnit = typing.Literal[
+    'years',
+    'months',
+    'weeks',
+    'days',
+    'hours',
+    'minutes',
+    'seconds',
+    'microseconds',
+]
+
+
+#
+# # functions
+#
+
+
+def to_numeric(value: typing.SupportsFloat) -> typing.Union[int, float]:
+    if isinstance(value, typing.SupportsInt) and type(
+        value
+    ).__name__.startswith('int'):
+        return int(value)
+    else:
+        return float(value)
+
+
+def str_to_numeric(value: str) -> typing.Union[int, float]:
+    try:
+        return int(value)
+    except Exception:
+        return float(value)
 
 
 #

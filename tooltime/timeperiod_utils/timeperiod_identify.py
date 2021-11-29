@@ -1,8 +1,15 @@
+import typing
+
+from typing_extensions import TypeGuard
+
+from .. import spec
 from .. import exceptions
 from .. import timestamp_utils
 
 
-def detect_timeperiod_representation(timeperiod):
+def detect_timeperiod_representation(
+    timeperiod: spec.Timeperiod,
+) -> spec.TimeperiodRepresentation:
     """return str name of Timeperiod representation"""
     if is_timeperiod_map(timeperiod):
         return 'TimeperiodMap'
@@ -14,7 +21,7 @@ def detect_timeperiod_representation(timeperiod):
         )
 
 
-def is_timeperiod(timeperiod):
+def is_timeperiod(timeperiod: typing.Any) -> TypeGuard[spec.Timeperiod]:
     """return bool of whether input is Timeperiod"""
     try:
         detect_timeperiod_representation(timeperiod)
@@ -23,7 +30,9 @@ def is_timeperiod(timeperiod):
         return False
 
 
-def is_timeperiod_map(timeperiod):
+def is_timeperiod_map(
+    timeperiod: typing.Any,
+) -> TypeGuard[spec.TimeperiodMap]:
     """return bool of whether input is TimeperiodMap"""
     return (
         isinstance(timeperiod, dict)
@@ -35,7 +44,9 @@ def is_timeperiod_map(timeperiod):
     )
 
 
-def is_timeperiod_pair(timeperiod):
+def is_timeperiod_pair(
+    timeperiod: typing.Any,
+) -> TypeGuard[spec.TimeperiodPair]:
     """return bool of whether input is TimeperiodPair"""
     return (
         isinstance(timeperiod, list)

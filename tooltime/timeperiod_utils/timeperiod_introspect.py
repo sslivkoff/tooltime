@@ -1,10 +1,15 @@
+import typing
+
+from .. import spec
 from .. import timestamp_utils
 from . import timeperiod_convert
 
 
 def print_timeperiod(
-    timeperiod, timestamp_representation='TimestampLabel', print_kwargs=None
-):
+    timeperiod: spec.Timeperiod,
+    timestamp_representation: spec.TimestampRepresentation = 'TimestampLabel',
+    print_kwargs: dict[str, typing.Any] = None,
+) -> None:
     """print Timeperiod
 
     ## Inputs

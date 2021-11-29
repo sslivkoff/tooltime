@@ -1,10 +1,16 @@
 import datetime
+import typing
 
+from typing_extensions import TypeGuard
+
+from .. import spec
 from .. import exceptions
 from . import timelength_units
 
 
-def detect_timelength_representation(timelength):
+def detect_timelength_representation(
+    timelength: spec.Timelength,
+) -> spec.TimelengthRepresentation:
     """return str name of Timelength representation"""
     if is_timelength_seconds(timelength):
         return 'TimelengthSeconds'
@@ -26,7 +32,7 @@ def detect_timelength_representation(timelength):
         )
 
 
-def is_timelength(timelength):
+def is_timelength(timelength: typing.Any) -> TypeGuard[spec.Timelength]:
     """return bool of whether input is Timelength"""
     try:
         detect_timelength_representation(timelength)
@@ -35,17 +41,23 @@ def is_timelength(timelength):
         return False
 
 
-def is_timelength_seconds(timelength):
+def is_timelength_seconds(
+    timelength: typing.Any,
+) -> TypeGuard[spec.TimelengthSeconds]:
     """return bool of whether input is TimelengthSeconds"""
     return isinstance(timelength, int)
 
 
-def is_timelength_seconds_precise(timelength):
+def is_timelength_seconds_precise(
+    timelength: typing.Any,
+) -> TypeGuard[spec.TimelengthSecondsPrecise]:
     """return bool of whether input is TimelengthSecondsPrecise"""
     return isinstance(timelength, float)
 
 
-def is_timelength_label(timelength):
+def is_timelength_label(
+    timelength: typing.Any,
+) -> TypeGuard[spec.TimelengthLabel]:
     """return bool of whether input is TimelengthLabel"""
 
     if not isinstance(timelength, str) or len(timelength) < 2:
@@ -60,7 +72,9 @@ def is_timelength_label(timelength):
         return False
 
 
-def is_timelength_clock(timelength):
+def is_timelength_clock(
+    timelength: typing.Any,
+) -> TypeGuard[spec.TimelengthClock]:
     """return bool of whether input is TimelengthClock"""
 
     if not isinstance(timelength, str):
@@ -75,7 +89,9 @@ def is_timelength_clock(timelength):
         return False
 
 
-def is_timelength_phrase(timelength):
+def is_timelength_phrase(
+    timelength: typing.Any,
+) -> TypeGuard[spec.TimelengthPhrase]:
     """return bool of whether input is TimelengthPhrase"""
 
     if not isinstance(timelength, str):
@@ -93,7 +109,9 @@ def is_timelength_phrase(timelength):
         return False
 
 
-def is_timelength_clock_phrase(timelength):
+def is_timelength_clock_phrase(
+    timelength: typing.Any,
+) -> TypeGuard[spec.TimelengthClockPhrase]:
     """return bool of whether input is TimelengthClockPhrase"""
 
     if not isinstance(timelength, str):
@@ -111,7 +129,9 @@ def is_timelength_clock_phrase(timelength):
     return is_timelength_phrase(phrase)
 
 
-def is_timelength_timedelta(timelength):
+def is_timelength_timedelta(
+    timelength: typing.Any,
+) -> TypeGuard[spec.TimelengthTimedelta]:
     """return bool of whether input is TimelengthTimedelta"""
     return isinstance(timelength, datetime.timedelta)
 

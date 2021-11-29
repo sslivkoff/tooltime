@@ -1,6 +1,8 @@
 import datetime
 import math
+import typing
 
+from .. import spec
 from . import timelength_units
 from . import timelength_identify
 
@@ -10,7 +12,74 @@ from . import timelength_identify
 #
 
 
-def convert_timelength(timelength, to_representation, from_representation=None):
+@typing.overload
+def convert_timelength(
+    timelength: spec.Timelength,
+    to_representation: typing.Literal['TimelengthSeconds'],
+    from_representation: typing.Optional[spec.TimelengthRepresentation],
+) -> spec.TimelengthSeconds:
+    ...
+
+
+@typing.overload
+def convert_timelength(
+    timelength: spec.Timelength,
+    to_representation: typing.Literal['TimelengthSecondsPrecise'],
+    from_representation: typing.Optional[spec.TimelengthRepresentation],
+) -> spec.TimelengthSecondsPrecise:
+    ...
+
+
+@typing.overload
+def convert_timelength(
+    timelength: spec.Timelength,
+    to_representation: typing.Literal['TimelengthLabel'],
+    from_representation: typing.Optional[spec.TimelengthRepresentation],
+) -> spec.TimelengthLabel:
+    ...
+
+
+@typing.overload
+def convert_timelength(
+    timelength: spec.Timelength,
+    to_representation: typing.Literal['TimelengthClock'],
+    from_representation: typing.Optional[spec.TimelengthRepresentation],
+) -> spec.TimelengthClock:
+    ...
+
+
+@typing.overload
+def convert_timelength(
+    timelength: spec.Timelength,
+    to_representation: typing.Literal['TimelengthPhrase'],
+    from_representation: typing.Optional[spec.TimelengthRepresentation],
+) -> spec.TimelengthPhrase:
+    ...
+
+
+@typing.overload
+def convert_timelength(
+    timelength: spec.Timelength,
+    to_representation: typing.Literal['TimelengthClockPhrase'],
+    from_representation: typing.Optional[spec.TimelengthRepresentation],
+) -> spec.TimelengthClockPhrase:
+    ...
+
+
+@typing.overload
+def convert_timelength(
+    timelength: spec.Timelength,
+    to_representation: typing.Literal['TimelengthTimedelta'],
+    from_representation: typing.Optional[spec.TimelengthRepresentation],
+) -> spec.TimelengthTimedelta:
+    ...
+
+
+def convert_timelength(
+    timelength: spec.Timelength,
+    to_representation: spec.TimelengthRepresentation,
+    from_representation: typing.Optional[spec.TimelengthRepresentation] = None,
+) -> spec.Timelength:
     """convert Timelength to a new representation
 
     ## Inputs
@@ -33,19 +102,19 @@ def convert_timelength(timelength, to_representation, from_representation=None):
         return timelength
 
     # convert to seconds
-    if from_representation == 'TimelengthSeconds':
+    if timelength_identify.is_timelength_seconds(timelength):
+        timelength_seconds: spec.TimelengthSecondsRaw = timelength
+    elif timelength_identify.is_timelength_seconds_precise(timelength):
         timelength_seconds = timelength
-    elif from_representation == 'TimelengthSecondsPrecise':
-        timelength_seconds = timelength
-    elif from_representation == 'TimelengthLabel':
+    elif timelength_identify.is_timelength_label(timelength):
         timelength_seconds = timelength_label_to_seconds(timelength)
-    elif from_representation == 'TimelengthClock':
+    elif timelength_identify.is_timelength_clock(timelength):
         timelength_seconds = timelength_clock_to_seconds(timelength)
-    elif from_representation == 'TimelengthPhrase':
+    elif timelength_identify.is_timelength_phrase(timelength):
         timelength_seconds = timelength_phrase_to_seconds(timelength)
-    elif from_representation == 'TimelengthClockPhrase':
+    elif timelength_identify.is_timelength_clock_phrase(timelength):
         timelength_seconds = timelength_clock_phrase_to_seconds(timelength)
-    elif from_representation == 'TimelengthTimedelta':
+    elif timelength_identify.is_timelength_timedelta(timelength):
         timelength_seconds = timelength_timedelta_to_seconds(timelength)
     else:
         raise Exception(
@@ -54,25 +123,23 @@ def convert_timelength(timelength, to_representation, from_representation=None):
 
     # convert to target type
     if to_representation == 'TimelengthSeconds':
-        to_timelength = int(timelength_seconds)
+        return int(timelength_seconds)
     elif to_representation == 'TimelengthSecondsPrecise':
-        to_timelength = float(timelength_seconds)
+        return float(timelength_seconds)
     elif to_representation == 'TimelengthLabel':
-        to_timelength = timelength_seconds_to_label(timelength_seconds)
+        return timelength_seconds_to_label(timelength_seconds)
     elif to_representation == 'TimelengthClock':
-        to_timelength = timelength_seconds_to_clock(timelength_seconds)
+        return timelength_seconds_to_clock(timelength_seconds)
     elif to_representation == 'TimelengthPhrase':
-        to_timelength = timelength_seconds_to_phrase(timelength_seconds)
+        return timelength_seconds_to_phrase(timelength_seconds)
     elif to_representation == 'TimelengthClockPhrase':
-        to_timelength = timelength_seconds_to_clock_phrase(timelength_seconds)
+        return timelength_seconds_to_clock_phrase(timelength_seconds)
     elif to_representation == 'TimelengthTimedelta':
-        to_timelength = timelength_seconds_to_timedelta(timelength_seconds)
+        return timelength_seconds_to_timedelta(timelength_seconds)
     else:
         raise Exception(
             'unknown timelength_representation: ' + str(to_representation)
         )
-
-    return to_timelength
 
 
 #
@@ -80,7 +147,10 @@ def convert_timelength(timelength, to_representation, from_representation=None):
 #
 
 
-def timelength_to_seconds(timelength, from_representation=None):
+def timelength_to_seconds(
+    timelength: spec.Timelength,
+    from_representation: spec.TimelengthRepresentation = None,
+) -> spec.TimelengthSeconds:
     """convert Timelength to TimelengthSeconds
 
     ## Inputs
@@ -97,7 +167,10 @@ def timelength_to_seconds(timelength, from_representation=None):
     )
 
 
-def timelength_to_seconds_precise(timelength, from_representation=None):
+def timelength_to_seconds_precise(
+    timelength: spec.Timelength,
+    from_representation: spec.TimelengthRepresentation = None,
+) -> spec.TimelengthSecondsPrecise:
     """convert Timelength to TimelengthSecondsPrecise
 
     ## Inputs
@@ -114,7 +187,10 @@ def timelength_to_seconds_precise(timelength, from_representation=None):
     )
 
 
-def timelength_to_label(timelength, from_representation=None):
+def timelength_to_label(
+    timelength: spec.Timelength,
+    from_representation: spec.TimelengthRepresentation = None,
+) -> spec.TimelengthLabel:
     """convert Timelength to TimelengthLabel
 
     ## Inputs
@@ -131,7 +207,10 @@ def timelength_to_label(timelength, from_representation=None):
     )
 
 
-def timelength_to_phrase(timelength, from_representation=None):
+def timelength_to_phrase(
+    timelength: spec.Timelength,
+    from_representation: spec.TimelengthRepresentation = None,
+) -> spec.TimelengthPhrase:
     """convert Timelength to TimelengthPhrase
 
     ## Inputs
@@ -148,7 +227,10 @@ def timelength_to_phrase(timelength, from_representation=None):
     )
 
 
-def timelength_to_clock(timelength, from_representation=None):
+def timelength_to_clock(
+    timelength: spec.Timelength,
+    from_representation: spec.TimelengthRepresentation = None,
+) -> spec.TimelengthClock:
     """convert Timelength to TimelengthClock
 
     ## Inputs
@@ -165,7 +247,10 @@ def timelength_to_clock(timelength, from_representation=None):
     )
 
 
-def timelength_to_clock_phrase(timelength, from_representation=None):
+def timelength_to_clock_phrase(
+    timelength: spec.Timelength,
+    from_representation: spec.TimelengthRepresentation = None,
+) -> spec.TimelengthClockPhrase:
     """convert Timelength to TimelengthClockPhrase
 
     ## Inputs
@@ -188,8 +273,11 @@ def timelength_to_clock_phrase(timelength, from_representation=None):
 
 
 def timelength_seconds_to_label(
-    timelength_seconds, base_only=False, fuzzy_tolerance=None, base_unit=None
-):
+    timelength_seconds: spec.TimelengthSecondsRaw,
+    base_only: bool = False,
+    fuzzy_tolerance: typing.SupportsFloat = None,
+    base_unit: str = None,
+) -> spec.TimelengthLabel:
     """convert seconds to TimelengthLabel
 
     - matches integer multiples of base units
@@ -244,8 +332,9 @@ def timelength_seconds_to_label(
         # attempt fuzzy match of base unit multiple
         if fuzzy_tolerance is not None:
             round_quotient = round(quotient)
-            upper_bound = (1 + fuzzy_tolerance) * round_quotient * base_seconds
-            lower_bound = (1 - fuzzy_tolerance) * round_quotient * base_seconds
+            factor = round_quotient * base_seconds
+            upper_bound = (1 + spec.to_numeric(fuzzy_tolerance)) * factor
+            lower_bound = (1 - spec.to_numeric(fuzzy_tolerance)) * factor
             if lower_bound <= seconds and seconds <= upper_bound:
                 unit_count = round_quotient
                 unit_letter = base_label[-1]
@@ -259,7 +348,9 @@ def timelength_seconds_to_label(
     return label
 
 
-def timelength_seconds_to_clock(timelength_seconds):
+def timelength_seconds_to_clock(
+    timelength_seconds: spec.TimelengthSecondsRaw,
+) -> spec.TimelengthClock:
     """convert seconds to TimelengthClock"""
     base_units = timelength_units.get_base_units()
     n_days = math.floor(timelength_seconds / base_units['1d'])
@@ -270,7 +361,9 @@ def timelength_seconds_to_clock(timelength_seconds):
     return clock
 
 
-def timelength_seconds_to_phrase(timelength_seconds):
+def timelength_seconds_to_phrase(
+    timelength_seconds: spec.TimelengthSecondsRaw,
+) -> spec.TimelengthPhrase:
     """convert seconds to TimelengthPhrase"""
 
     unit_names = [
@@ -285,17 +378,19 @@ def timelength_seconds_to_phrase(timelength_seconds):
     remaining = timelength_seconds
     base_units = timelength_units.get_base_units()
     unit_names_to_labels = timelength_units.get_unit_labels()
-    unit_counts = []
+    unit_counts: list[typing.Union[int, float]] = []
     for unit_name in unit_names:
         unit_seconds = base_units[unit_names_to_labels[unit_name]]
-        unit_count = math.floor(remaining / unit_seconds)
+        unit_count: typing.Union[int, float] = math.floor(
+            remaining / unit_seconds
+        )
         unit_counts.append(unit_count)
         remaining = remaining % unit_seconds
     if not math.isclose(remaining, 0):
         unit_counts[-1] += remaining
 
     # assemble pieces from unit counts
-    pieces = []
+    pieces: list[str] = []
     for unit_count, unit_name in zip(unit_counts, unit_names):
         if unit_count > 0:
             piece = str(unit_count) + ' ' + unit_name
@@ -310,7 +405,9 @@ def timelength_seconds_to_phrase(timelength_seconds):
     return phrase
 
 
-def timelength_seconds_to_clock_phrase(timelength_seconds):
+def timelength_seconds_to_clock_phrase(
+    timelength_seconds: spec.TimelengthSecondsRaw,
+) -> spec.TimelengthClockPhrase:
     """convert seconds to TimelengthClockPhrase"""
 
     base_units = timelength_units.get_base_units()
@@ -334,7 +431,9 @@ def timelength_seconds_to_clock_phrase(timelength_seconds):
     return phrase
 
 
-def timelength_seconds_to_timedelta(timelength_seconds):
+def timelength_seconds_to_timedelta(
+    timelength_seconds: spec.TimelengthSecondsRaw,
+) -> spec.TimelengthTimedelta:
     """convert seconds to TimelengthTimedelta"""
     return datetime.timedelta(seconds=timelength_seconds)
 
@@ -344,7 +443,9 @@ def timelength_seconds_to_timedelta(timelength_seconds):
 #
 
 
-def timelength_label_to_seconds(timelength_label):
+def timelength_label_to_seconds(
+    timelength_label: spec.TimelengthLabel,
+) -> spec.TimelengthSeconds:
     """convert TimelengthLabel to seconds"""
     number = int(timelength_label[:-1])
     letter = timelength_label[-1]
@@ -354,16 +455,18 @@ def timelength_label_to_seconds(timelength_label):
     return seconds
 
 
-def timelength_clock_to_seconds(timelength_clock):
+def timelength_clock_to_seconds(
+    timelength_clock: spec.TimelengthClock,
+) -> spec.TimelengthSecondsRaw:
     """convert TimelengthClock to seconds"""
 
     pieces = timelength_clock.split(':')
-    piece_numbers = [float(piece) for piece in pieces]
+    piece_numbers = [spec.str_to_numeric(piece) for piece in pieces]
     if len(pieces) == 3:
-        days = 0
-        hours = piece_numbers[0]
-        minutes = piece_numbers[1]
-        seconds = piece_numbers[2]
+        days: typing.Union[int, float] = 0
+        hours: typing.Union[int, float] = piece_numbers[0]
+        minutes: typing.Union[int, float] = piece_numbers[1]
+        seconds: typing.Union[int, float] = piece_numbers[2]
     elif len(pieces) == 4:
         days = piece_numbers[0]
         hours = piece_numbers[1]
@@ -381,23 +484,27 @@ def timelength_clock_to_seconds(timelength_clock):
     )
 
 
-def timelength_phrase_to_seconds(timelength_phrase):
+def timelength_phrase_to_seconds(
+    timelength_phrase: spec.TimelengthPhrase,
+) -> spec.TimelengthSecondsRaw:
     """convert TimelengthPhrase to seconds"""
 
     bases = timelength_units.get_base_units()
     unit_names_to_labels = timelength_units.get_unit_labels()
     phrase_pieces = timelength_phrase.split(', ')
 
-    seconds = 0
+    seconds: typing.Union[int, float] = 0
     for piece in phrase_pieces:
         unit_count, unit_name = piece.split(' ')
-        unit_count = float(unit_count)
-        seconds += unit_count * bases[unit_names_to_labels[unit_name]]
+        unit_count_numeric = spec.str_to_numeric(unit_count)
+        seconds += unit_count_numeric * bases[unit_names_to_labels[unit_name]]
 
     return seconds
 
 
-def timelength_clock_phrase_to_seconds(timelength_clock_phrase):
+def timelength_clock_phrase_to_seconds(
+    timelength_clock_phrase: spec.TimelengthClockPhrase,
+) -> spec.TimelengthSecondsRaw:
     """convert TimelengthClockPhrase to seconds"""
 
     pieces = timelength_clock_phrase.split(', ')
@@ -410,7 +517,9 @@ def timelength_clock_phrase_to_seconds(timelength_clock_phrase):
     return phrase_seconds + clock_seconds
 
 
-def timelength_timedelta_to_seconds(timelength_timedelta):
+def timelength_timedelta_to_seconds(
+    timelength_timedelta: spec.TimelengthTimedelta,
+) -> spec.TimelengthSecondsRaw:
     """convert TimelengthTimedelta to seconds"""
     return timelength_timedelta.total_seconds()
 
@@ -420,7 +529,9 @@ def timelength_timedelta_to_seconds(timelength_timedelta):
 #
 
 
-def timelength_to_pandas_timelength(timelength):
+def timelength_to_pandas_timelength(
+    timelength: spec.Timelength,
+) -> spec.TimelengthPandas:
     timelength_label = timelength_to_label(timelength)
     number = timelength_label[:-1]
     unit_name = timelength_units.unit_letters_to_names()[timelength_label[-1]]

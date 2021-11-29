@@ -1,8 +1,13 @@
+import typing
+
+from .. import spec
 from .. import timelength_utils
 from . import timeperiod_crud
 
 
-def timeperiods_overlap(timeperiod_lhs, timeperiod_rhs):
+def timeperiods_overlap(
+    timeperiod_lhs: spec.Timeperiod, timeperiod_rhs: spec.Timeperiod
+) -> bool:
     """return bool of whether timeperiods have any overlap"""
     start_lhs, end_lhs = timeperiod_crud.compute_timeperiod_start_end(
         timeperiod_lhs
@@ -15,7 +20,10 @@ def timeperiods_overlap(timeperiod_lhs, timeperiod_rhs):
     )
 
 
-def timeperiod_contains(timeperiod, other_timeperiod):
+def timeperiod_contains(
+    timeperiod: spec.Timeperiod,
+    other_timeperiod: spec.Timeperiod,
+) -> bool:
     """return bool of whether timeperiod contains other timeperiod"""
     start, end = timeperiod_crud.compute_timeperiod_start_end(timeperiod)
     other_start, other_end = timeperiod_crud.compute_timeperiod_start_end(
@@ -24,7 +32,9 @@ def timeperiod_contains(timeperiod, other_timeperiod):
     return (start <= other_start) and (end >= other_end)
 
 
-def create_superset_timeperiod(*timeperiods):
+def create_superset_timeperiod(
+    *timeperiods: spec.Timeperiod,
+) -> spec.Timeperiod:
     """create Timeperiod that contains all input Timeperiods"""
     min_start = float('inf')
     max_end = float('-inf')
@@ -34,19 +44,19 @@ def create_superset_timeperiod(*timeperiods):
             min_start = start
         if end > max_end:
             max_end = end
-    return [min_start, max_end]
+    return (min_start, max_end)
 
 
 def create_overlapping_timeperiod(
-    timeperiod,
-    trim_start_relative=None,
-    trim_end_relative=None,
-    trim_start_absolute=None,
-    trim_end_absolute=None,
-    extend_start_relative=None,
-    extend_end_relative=None,
-    extend_start_absolute=None,
-    extend_end_absolute=None,
+    timeperiod: spec.Timeperiod,
+    trim_start_relative: typing.SupportsFloat = None,
+    trim_end_relative: typing.SupportsFloat = None,
+    trim_start_absolute: typing.SupportsFloat = None,
+    trim_end_absolute: typing.SupportsFloat = None,
+    extend_start_relative: typing.SupportsFloat = None,
+    extend_end_relative: typing.SupportsFloat = None,
+    extend_start_absolute: typing.SupportsFloat = None,
+    extend_end_absolute: typing.SupportsFloat = None,
 ):
     """create copy of timeperiod with start or end trimmed or extended
 
@@ -71,33 +81,33 @@ def create_overlapping_timeperiod(
 
     # trim boundaries
     if trim_start_relative is not None:
-        new_start = new_start + trim_start_relative * length
+        new_start = new_start + spec.to_numeric(trim_start_relative) * length
     if trim_end_relative is not None:
-        new_end = new_end - trim_end_relative * length
+        new_end = new_end - spec.to_numeric(trim_end_relative) * length
     if trim_start_absolute is not None:
         trim_start_seconds = timelength_utils.timelength_to_seconds(
-            trim_start_absolute
+            spec.to_numeric(trim_start_absolute)
         )
         new_start = new_start + trim_start_seconds
     if trim_end_absolute is not None:
         trim_end_seconds = timelength_utils.timelength_to_seconds(
-            trim_end_absolute
+            spec.to_numeric(trim_end_absolute)
         )
         new_end = new_end - trim_end_seconds
 
     # extend boundaries
     if extend_start_relative is not None:
-        new_start = new_start - extend_start_relative * length
+        new_start = new_start - spec.to_numeric(extend_start_relative) * length
     if extend_end_relative is not None:
-        new_end = new_end + extend_end_relative * length
+        new_end = new_end + spec.to_numeric(extend_end_relative) * length
     if extend_start_absolute is not None:
         extend_start_seconds = timelength_utils.timelength_to_seconds(
-            extend_start_absolute
+            spec.to_numeric(extend_start_absolute)
         )
         new_start = new_start - extend_start_seconds
     if extend_end_absolute is not None:
         extend_end_seconds = timelength_utils.timelength_to_seconds(
-            extend_end_absolute
+            spec.to_numeric(extend_end_absolute)
         )
         new_end = new_end + extend_end_seconds
 

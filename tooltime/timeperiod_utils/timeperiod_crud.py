@@ -1,11 +1,18 @@
+import datetime
+import typing
+
+from .. import spec
 from .. import timestamp_utils
 from .. import timelength_utils
 from . import timeperiod_identify
 
 
 def create_timeperiod(
-    start=None, end=None, length=None, to_representation=None
-):
+    start: spec.Timestamp = None,
+    end: spec.Timestamp = None,
+    length: spec.Timelength = None,
+    to_representation: spec.TimeperiodRepresentation = None,
+) -> spec.Timeperiod:
     """create Timeperiod
 
     ## Inputs
@@ -31,7 +38,11 @@ def create_timeperiod(
         )
 
 
-def create_timeperiod_pair(start=None, end=None, length=None):
+def create_timeperiod_pair(
+    start: spec.Timestamp = None,
+    end: spec.Timestamp = None,
+    length: spec.Timelength = None,
+) -> spec.TimeperiodPair:
     """create Timeperiod with representation TimeperiodPair
 
     ## Inputs
@@ -43,10 +54,14 @@ def create_timeperiod_pair(start=None, end=None, length=None):
     - TimeperiodPair
     """
     start, end = compute_start_end(start=start, end=end, length=length)
-    return [start, end]
+    return (start, end)
 
 
-def create_timeperiod_map(start=None, end=None, length=None):
+def create_timeperiod_map(
+    start: spec.Timestamp = None,
+    end: spec.Timestamp = None,
+    length: spec.Timelength = None,
+) -> spec.TimeperiodMap:
     """create Timeperiod with representation TimeperiodMap
 
     ## Inputs
@@ -61,7 +76,11 @@ def create_timeperiod_map(start=None, end=None, length=None):
     return {'start': start, 'end': end}
 
 
-def compute_start_end(start=None, end=None, length=None):
+def compute_start_end(
+    start: spec.Timestamp = None,
+    end: spec.Timestamp = None,
+    length: spec.Timelength = None,
+) -> tuple[typing.Union[int, float], typing.Union[int, float]]:
     """return start and end given two of start, end, and length
 
     ## Inputs
@@ -72,45 +91,61 @@ def compute_start_end(start=None, end=None, length=None):
     ## Returns
     - TimeperiodPair
     """
-    if [start, end, length].count(None) != 1:
-        raise Exception('must specify exactly 2 inputs')
 
     # convert inputs to seconds
     if start is not None:
         start = timestamp_utils.timestamp_to_seconds(start)
     if end is not None:
         end = timestamp_utils.timestamp_to_seconds(end)
-    if length is not None:
-        if not isinstance(length, (int, float)):
-            length = timelength_utils.timelength_to_seconds_precise(length)
+    if length is None:
+        length_seconds: typing.Union[int, float, None] = None
+    elif isinstance(length, int):
+        length_seconds = length
+    elif isinstance(length, datetime.timedelta) or isinstance(length, str):
+        length_seconds = timelength_utils.timelength_to_seconds_precise(length)
 
     # compute unknown bounds
-    if start is None:
-        start = end - length
-    if end is None:
-        end = start + length
+    if end is not None and length_seconds is not None:
+        start = end - length_seconds
+    elif start is not None and length_seconds is not None:
+        end = start + length_seconds
+    elif start is not None and end is not None:
+        pass
+    else:
+        raise Exception('must specify exactly 2 inputs')
 
-    return [start, end]
+    if type(start).__name__.startswith('int'):
+        start = int(start)
+    else:
+        start = float(start)
+    if type(end).__name__.startswith('int'):
+        end = int(end)
+    else:
+        end = float(end)
+
+    return (start, end)
 
 
-def compute_timeperiod_start_end(timeperiod):
+def compute_timeperiod_start_end(
+    timeperiod: spec.Timeperiod,
+) -> tuple[typing.Union[int, float], typing.Union[int, float]]:
     """compute start and end seconds of a timeperiod"""
 
-    representation = timeperiod_identify.detect_timeperiod_representation(
-        timeperiod
-    )
-    if representation == 'TimeperiodPair':
+    if timeperiod_identify.is_timeperiod_pair(timeperiod):
         start, end = timeperiod
-    elif representation == 'TimeperiodPair':
+    elif timeperiod_identify.is_timeperiod_map(timeperiod):
         start = timeperiod['start']
         end = timeperiod['end']
     else:
+        representation = timeperiod_identify.detect_timeperiod_representation(
+            timeperiod
+        )
         raise Exception(
             'unknown timeperiod representation: ' + str(representation)
         )
 
-    start = timelength_utils.timelength_to_seconds_precise(start)
-    end = timelength_utils.timelength_to_seconds_precise(end)
+    start_numerical = timestamp_utils.timestamp_to_numerical(start)
+    end_numerical = timestamp_utils.timestamp_to_numerical(end)
 
-    return [start, end]
+    return (start_numerical, end_numerical)
 
