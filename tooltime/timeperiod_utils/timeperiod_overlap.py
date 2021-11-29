@@ -51,13 +51,13 @@ def create_overlapping_timeperiod(
     timeperiod: spec.Timeperiod,
     trim_start_relative: typing.SupportsFloat = None,
     trim_end_relative: typing.SupportsFloat = None,
-    trim_start_absolute: typing.SupportsFloat = None,
-    trim_end_absolute: typing.SupportsFloat = None,
+    trim_start_absolute: spec.Timelength = None,
+    trim_end_absolute: spec.Timelength = None,
     extend_start_relative: typing.SupportsFloat = None,
     extend_end_relative: typing.SupportsFloat = None,
-    extend_start_absolute: typing.SupportsFloat = None,
-    extend_end_absolute: typing.SupportsFloat = None,
-):
+    extend_start_absolute: spec.Timelength = None,
+    extend_end_absolute: spec.Timelength = None,
+) -> spec.Timeperiod:
     """create copy of timeperiod with start or end trimmed or extended
 
     - can trim or end by relative or absolute amount
@@ -86,12 +86,12 @@ def create_overlapping_timeperiod(
         new_end = new_end - spec.to_numeric(trim_end_relative) * length
     if trim_start_absolute is not None:
         trim_start_seconds = timelength_utils.timelength_to_seconds(
-            spec.to_numeric(trim_start_absolute)
+            trim_start_absolute
         )
         new_start = new_start + trim_start_seconds
     if trim_end_absolute is not None:
         trim_end_seconds = timelength_utils.timelength_to_seconds(
-            spec.to_numeric(trim_end_absolute)
+            trim_end_absolute
         )
         new_end = new_end - trim_end_seconds
 
@@ -102,14 +102,14 @@ def create_overlapping_timeperiod(
         new_end = new_end + spec.to_numeric(extend_end_relative) * length
     if extend_start_absolute is not None:
         extend_start_seconds = timelength_utils.timelength_to_seconds(
-            spec.to_numeric(extend_start_absolute)
+            extend_start_absolute
         )
         new_start = new_start - extend_start_seconds
     if extend_end_absolute is not None:
         extend_end_seconds = timelength_utils.timelength_to_seconds(
-            spec.to_numeric(extend_end_absolute)
+            extend_end_absolute
         )
         new_end = new_end + extend_end_seconds
 
-    return [new_start, new_end]
+    return (new_start, new_end)
 

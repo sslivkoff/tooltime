@@ -49,7 +49,7 @@ def is_timeperiod_pair(
 ) -> TypeGuard[spec.TimeperiodPair]:
     """return bool of whether input is TimeperiodPair"""
     return (
-        isinstance(timeperiod, list)
+        isinstance(timeperiod, tuple)
         and len(timeperiod) == 2
         and timestamp_utils.is_timestamp(timeperiod[0])
         and timestamp_utils.is_timestamp(timeperiod[1])

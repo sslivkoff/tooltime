@@ -266,7 +266,7 @@ equivalent_sets = {
     'Timeperiod': [
         {
             'TimeperiodMap': {'start': 1600000000, 'end': 1600000001},
-            'TimeperiodPair': [1600000000, 1600000001],
+            'TimeperiodPair': (1600000000, 1600000001),
         },
     ],
     'Timefrequency': [
