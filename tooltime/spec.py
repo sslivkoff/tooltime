@@ -25,6 +25,11 @@ TimestampRepresentation = typing.Literal[
     'TimestampISO',
     'TimestampDatetime',
 ]
+TimestampStrRepresentation = typing.Literal[
+    'TimestampLabel',
+    'TimestampISO',
+]
+
 
 TimestampSummary = dict[str, typing.Any]
 
