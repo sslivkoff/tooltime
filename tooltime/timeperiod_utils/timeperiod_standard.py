@@ -8,9 +8,8 @@ from .. import timestamp_utils
 
 
 def get_standard_timeperiod(
-    # standard_timeperiod_spec=None,
-    *,
     timelength_label: spec.TimelengthLabel = None,
+    *,
     block_unit: typing.Optional[spec.DatetimeUnit] = None,
     block_size: typing.Optional[int] = None,
     timestamp: typing.Optional[spec.Timestamp] = None,
@@ -43,15 +42,6 @@ def get_standard_timeperiod(
     - include_end: bool of whether to include end boundary of timeperiod
     - boundary_unit: str name of boundary unit to be shaved off open intervals
     """
-
-    # if standard_timeperiod_spec is not None:
-    #     if isinstance(standard_timeperiod_spec, str):
-    #         kwargs = {'timelength_label': standard_timeperiod_spec}
-    #     elif isinstance(standard_timeperiod_spec, dict[str, typing.Any]):
-    #         kwargs = standard_timeperiod_spec
-    #     else:
-    #         raise Exception('unkno')
-    #     return get_standard_timeperiod(**kwargs)
 
     if (timelength_label is not None) and (block_unit is not None):
         raise Exception('must specify either timelength_label or block_unit')
