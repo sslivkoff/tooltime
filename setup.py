@@ -18,5 +18,8 @@ setuptools.setup(
         'numpy',
     ],
     python_requires='>=3.6',
+    package_data={
+        'tooltime': ['py.typed'],
+    }
 )
 
