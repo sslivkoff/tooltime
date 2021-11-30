@@ -104,11 +104,11 @@ def get_standard_timeperiod(
 
 
 def get_standard_intervals(
-    interval_size: typing.SupportsFloat,
+    interval_size: spec.Timelength,
     start_time: typing.Optional[spec.Timestamp] = None,
     end_time: typing.Optional[spec.Timestamp] = None,
     n_intervals: typing.Optional[int] = None,
-    window_size: typing.Optional[typing.SupportsFloat] = None,
+    window_size: typing.Optional[spec.Timelength] = None,
 ) -> list[spec.TimestampSeconds]:
     """
     ## Valid Inputs
@@ -140,14 +140,12 @@ def get_standard_intervals(
     if interval_size is not None:
         date_range_kwargs[
             'freq'
-        ] = timelength_utils.timelength_to_pandas_timelength(
-            spec.to_numeric(interval_size)
-        )
+        ] = timelength_utils.timelength_to_pandas_timelength(interval_size)
 
     # parse n_intervals
     if window_size is not None:
-        window_length = spec.to_numeric(window_size)
-        interval_length = spec.to_numeric(interval_size)
+        window_length = timelength_utils.timelength_to_seconds(window_size)
+        interval_length = timelength_utils.timelength_to_seconds(interval_size)
         n_intervals = int(window_length / interval_length)
     if n_intervals is not None:
         date_range_kwargs['periods'] = n_intervals
@@ -157,7 +155,7 @@ def get_standard_intervals(
         timeperiod = get_standard_timeperiod(
             timestamp=start_time,
             timelength_label=timelength_utils.timelength_to_label(
-                spec.to_numeric(interval_size)
+                interval_size
             ),
             include_end=True,
         )
@@ -168,7 +166,7 @@ def get_standard_intervals(
         timeperiod = get_standard_timeperiod(
             timestamp=end_time,
             timelength_label=timelength_utils.timelength_to_label(
-                spec.to_numeric(interval_size)
+                interval_size
             ),
             include_end=True,
         )
