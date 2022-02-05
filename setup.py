@@ -1,4 +1,3 @@
-
 import setuptools
 
 
@@ -8,7 +7,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 setuptools.setup(
     name='tooltime',
-    version='0.0.1',
+    version='0.1.0',
     description='tooltime makes it easier to perform operations on time data',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -16,10 +15,11 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     install_requires=[
         'numpy',
+        'pandas',
     ],
     python_requires='>=3.6',
     package_data={
         'tooltime': ['py.typed'],
-    }
+    },
 )
 
