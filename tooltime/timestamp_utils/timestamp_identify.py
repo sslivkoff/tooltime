@@ -40,7 +40,11 @@ def is_timestamp_seconds(
     timestamp: typing.Any,
 ) -> TypeGuard[spec.TimestampSeconds]:
     """return bool of whether input is TimestampSeconds"""
-    return isinstance(timestamp, int)
+    return isinstance(timestamp, int) or type(timestamp).__name__ in [
+        'int16',
+        'int32',
+        'int64',
+    ]
 
 
 def is_timestamp_seconds_precise(
