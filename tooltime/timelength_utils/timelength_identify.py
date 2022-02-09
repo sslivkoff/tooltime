@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 import datetime
 import typing
 
-from typing_extensions import TypeGuard
+if typing.TYPE_CHECKING:
+    from typing_extensions import TypeGuard
 
 from .. import spec
 from .. import exceptions
