@@ -31,7 +31,7 @@ TimestampStrRepresentation = typing.Literal[
 ]
 
 
-TimestampSummary = dict[str, typing.Any]
+TimestampSummary = typing.Dict[str, typing.Any]
 
 
 #
@@ -83,7 +83,7 @@ class TimeperiodMapSeconds(typing.TypedDict):
     end: TimestampSeconds
 
 
-TimeperiodPair = tuple[Timestamp, Timestamp]
+TimeperiodPair = typing.Tuple[Timestamp, Timestamp]
 Timeperiod = typing.Union[TimeperiodMap, TimeperiodPair]
 
 TimeperiodRepresentation = typing.Literal[
