@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing_extensions import Literal, TypedDict
+
 import datetime
 import typing
 
@@ -18,14 +22,14 @@ Timestamp = typing.Union[
     TimestampISO,
     TimestampDatetime,
 ]
-TimestampRepresentation = typing.Literal[
+TimestampRepresentation = Literal[
     'TimestampSeconds',
     'TimestampSecondsPrecise',
     'TimestampLabel',
     'TimestampISO',
     'TimestampDatetime',
 ]
-TimestampStrRepresentation = typing.Literal[
+TimestampStrRepresentation = Literal[
     'TimestampLabel',
     'TimestampISO',
 ]
@@ -55,7 +59,7 @@ Timelength = typing.Union[
     TimelengthClockPhrase,
     TimelengthTimedelta,
 ]
-TimelengthRepresentation = typing.Literal[
+TimelengthRepresentation = Literal[
     'TimelengthSeconds',
     'TimelengthSecondsPrecise',
     'TimelengthLabel',
@@ -73,12 +77,12 @@ TimelengthPandas = str
 #
 
 
-class TimeperiodMap(typing.TypedDict):
+class TimeperiodMap(TypedDict):
     start: Timestamp
     end: Timestamp
 
 
-class TimeperiodMapSeconds(typing.TypedDict):
+class TimeperiodMapSeconds(TypedDict):
     start: TimestampSeconds
     end: TimestampSeconds
 
@@ -86,7 +90,7 @@ class TimeperiodMapSeconds(typing.TypedDict):
 TimeperiodPair = typing.Tuple[Timestamp, Timestamp]
 Timeperiod = typing.Union[TimeperiodMap, TimeperiodPair]
 
-TimeperiodRepresentation = typing.Literal[
+TimeperiodRepresentation = Literal[
     'TimeperiodPair',
     'TimeperiodMap',
 ]
@@ -99,12 +103,12 @@ TimeperiodRepresentation = typing.Literal[
 TimefreqeuncyFrequency = typing.Union[int, float]
 
 
-class TimefrequencyCountPer(typing.TypedDict):
+class TimefrequencyCountPer(TypedDict):
     count: typing.Union[int, float]
     per: Timestamp
 
 
-class TimefrequencyInterval(typing.TypedDict):
+class TimefrequencyInterval(TypedDict):
     interval: Timestamp
 
 
@@ -114,7 +118,7 @@ Timefrequency = typing.Union[
     TimefrequencyInterval,
 ]
 
-TimefrequencyRepresentation = typing.Literal[
+TimefrequencyRepresentation = Literal[
     'TimefrequencyFrequency',
     'TimefrequencyCountPer',
     'TimefrequencyInterval',
@@ -125,7 +129,7 @@ TimefrequencyRepresentation = typing.Literal[
 # # datetime
 #
 
-DatetimeUnit = typing.Literal[
+DatetimeUnit = Literal[
     'year',
     'month',
     'day',
@@ -135,7 +139,7 @@ DatetimeUnit = typing.Literal[
     'microsecond',
 ]
 
-SingularTimeUnit = typing.Literal[
+SingularTimeUnit = Literal[
     'year',
     'month',
     'week',
@@ -146,7 +150,7 @@ SingularTimeUnit = typing.Literal[
     'microsecond',
 ]
 
-PluralTimeUnit = typing.Literal[
+PluralTimeUnit = Literal[
     'years',
     'months',
     'weeks',

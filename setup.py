@@ -16,6 +16,7 @@ setuptools.setup(
     install_requires=[
         'numpy',
         'pandas',
+        'typing_extensions',
     ],
     python_requires='>=3.6',
     package_data={
