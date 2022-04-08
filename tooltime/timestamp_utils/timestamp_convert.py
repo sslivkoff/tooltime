@@ -114,6 +114,8 @@ def convert_timestamp(
         return timestamp_seconds_to_iso(timestamp_seconds)
     elif to_representation == 'TimestampDatetime':
         return timestamp_seconds_to_datetime(timestamp_seconds)
+    elif to_representation == 'TimestampDate':
+        return timestamp_seconds_to_iso(timestamp_seconds)[:10]
     else:
         raise Exception(
             'unknown timestamp representation: ' + str(to_representation)
