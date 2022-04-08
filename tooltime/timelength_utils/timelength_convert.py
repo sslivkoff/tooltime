@@ -269,6 +269,26 @@ def timelength_to_clock_phrase(
     )
 
 
+def timelength_to_timedelta(
+    timelength: spec.Timelength,
+    from_representation: spec.TimelengthRepresentation = None,
+) -> spec.TimelengthTimedelta:
+    """convert Timelength to TimelengthTimedelta
+
+    ## Inputs
+    - timelength: Timelength
+    - from_representation: str representation name of input timelength
+
+    ## Returns
+    - TimelengthTimedelta timelength
+    """
+    return convert_timelength(
+        timelength=timelength,
+        to_representation='TimelengthTimedelta',
+        from_representation=from_representation,
+    )
+
+
 #
 # # specific conversion functions, from seconds
 #

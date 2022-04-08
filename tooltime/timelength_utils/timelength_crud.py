@@ -40,50 +40,51 @@ def create_timelength(
 
 
 def create_timelength_seconds(
-    seconds: spec.TimelengthSecondsRaw,
+    timelength: spec.Timelength,
 ) -> spec.TimelengthSeconds:
     """create Timelength with representation TimelengthSeconds"""
-    return int(seconds)
+    # return int(seconds)
+    return timelength_convert.timelength_to_seconds(timelength)
 
 
 def create_timelength_seconds_precise(
-    seconds: spec.TimelengthSecondsRaw,
+    timelength: spec.Timelength,
 ) -> spec.TimelengthSecondsPrecise:
     """create Timelength with representation TimelengthPrecise"""
-    return float(seconds)
+    return timelength_convert.timelength_to_seconds_precise(timelength)
 
 
 def create_timelength_label(
-    seconds: spec.TimelengthSecondsRaw,
+    timelength: spec.Timelength,
 ) -> spec.TimelengthLabel:
     """create Timelength with representation TimelengthLabel"""
-    return timelength_convert.timelength_seconds_to_label(seconds)
+    return timelength_convert.timelength_to_label(timelength)
 
 
 def create_timelength_phrase(
-    seconds: spec.TimelengthSecondsRaw,
+    timelength: spec.Timelength,
 ) -> spec.TimelengthPhrase:
     """create Timelength with representation TimelengthPhrase"""
-    return timelength_convert.timelength_seconds_to_phrase(seconds)
+    return timelength_convert.timelength_to_phrase(timelength)
 
 
 def create_timelength_clock(
-    seconds: spec.TimelengthSecondsRaw,
+    timelength: spec.Timelength,
 ) -> spec.TimelengthClock:
     """create Timelength with representation TimelengthClock"""
-    return timelength_convert.timelength_seconds_to_clock(seconds)
+    return timelength_convert.timelength_to_clock(timelength)
 
 
 def create_timelength_clock_phrase(
-    seconds: spec.TimelengthSecondsRaw,
+    timelength: spec.Timelength,
 ) -> spec.TimelengthClockPhrase:
     """create Timelength with representation TimelengthClockPhrase"""
-    return timelength_convert.timelength_seconds_to_clock_phrase(seconds)
+    return timelength_convert.timelength_to_clock_phrase(timelength)
 
 
 def create_timelength_timedelta(
-    seconds: spec.TimelengthSecondsRaw,
+    timelength: spec.Timelength,
 ) -> spec.TimelengthTimedelta:
     """create Timelength with representation TimelengthTimedelta"""
-    return timelength_convert.timelength_seconds_to_timedelta(seconds)
+    return timelength_convert.timelength_to_timedelta(timelength)
 
