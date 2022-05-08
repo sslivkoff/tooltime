@@ -1,7 +1,33 @@
+from __future__ import annotations
+
+import typing
+from typing_extensions import TypedDict
+
+if typing.TYPE_CHECKING:
+    import numpy as np
+
 from .. import timelength_utils
 
 
-def detect_resolution(timestamps, use_n=None, outlier_rtol=0.5):
+class TimeFrequencyResolution(TypedDict):
+    label: str
+    dts: typing.Sequence[typing.SupportsInt | typing.SupportsFloat]
+    use_n: int | None
+    median_dt: float
+    outliers: TimeFrequencyResolutionOutliers
+
+
+class TimeFrequencyResolutionOutliers(TypedDict):
+    small: np.ndarray
+    large: np.ndarray
+    outlier_rtol: float
+
+
+def detect_resolution(
+    timestamps: typing.Sequence[typing.SupportsInt | typing.SupportsFloat],
+    use_n: int | None = None,
+    outlier_rtol: float = 0.5,
+) -> TimeFrequencyResolution | None:
     """detect resolution of iterable of Timestamps
 
     ## Detection Algorithm
@@ -15,21 +41,26 @@ def detect_resolution(timestamps, use_n=None, outlier_rtol=0.5):
     - outlier_rtol: float of tolerance for detecting outliers
     """
 
-    import numpy as np
+    try:
+        import numpy as np
+    except ImportError:
+        raise Exception('numpy required for resolution detection')
 
     if len(timestamps) == 1:
         return None
 
     # preprocess
-    if not isinstance(timestamps, np.ndarray):
-        timestamps = np.array(timestamps)
+    if isinstance(timestamps, np.ndarray):
+        timestamps_array = timestamps
+    else:
+        timestamps_array = np.array(timestamps)
     if use_n is not None:
-        timestamps = timestamps[:use_n]
+        timestamps_array = timestamps_array[:use_n]
 
     # compute time deltas
-    dts = timestamps[1:] - timestamps[:-1]
+    dts = timestamps_array[1:] - timestamps_array[:-1]
     median_dt = np.median(dts)
-    outliers = {
+    outliers: TimeFrequencyResolutionOutliers = {
         'small': dts[dts < 1 / (1 + outlier_rtol) * median_dt],
         'large': dts[dts > (1 + outlier_rtol) * median_dt],
         'outlier_rtol': outlier_rtol,
@@ -44,4 +75,3 @@ def detect_resolution(timestamps, use_n=None, outlier_rtol=0.5):
         'median_dt': median_dt,
         'outliers': outliers,
     }
-

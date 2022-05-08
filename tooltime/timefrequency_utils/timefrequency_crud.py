@@ -1,9 +1,16 @@
+from __future__ import annotations
+
+from .. import spec
 from .. import timelength_utils
 
 
 def create_timefrequency(
-    frequency=None, count=None, per=None, interval=None, to_representation=None,
-):
+    frequency: int | float | None = None,
+    count: int | float | None = None,
+    per: spec.Timelength | None = None,
+    interval: spec.Timelength | None = None,
+    to_representation: spec.TimefrequencyRepresentation | None = None,
+) -> spec.Timefrequency:
     """create Timefrequency
 
     ## Inputs
@@ -20,13 +27,27 @@ def create_timefrequency(
     if to_representation is None:
         to_representation = 'TimefrequencyFrequency'
 
-    kwargs = dict(frequency=frequency, count=count, per=per, interval=interval)
     if to_representation == 'TimefrequencyFrequency':
-        return create_timefrequency_frequency(**kwargs)
+        return create_timefrequency_frequency(
+            frequency=frequency,
+            count=count,
+            per=per,
+            interval=interval,
+        )
     elif to_representation == 'TimefrequencyCountPer':
-        return create_timefrequency_count_per(**kwargs)
+        return create_timefrequency_count_per(
+            frequency=frequency,
+            count=count,
+            per=per,
+            interval=interval,
+        )
     elif to_representation == 'TimefrequencyInterval':
-        return create_timefrequency_interval(**kwargs)
+        return create_timefrequency_interval(
+            frequency=frequency,
+            count=count,
+            per=per,
+            interval=interval,
+        )
     else:
         raise Exception(
             'unknown timefrequency representation: ' + str(to_representation)
@@ -34,8 +55,11 @@ def create_timefrequency(
 
 
 def create_timefrequency_frequency(
-    frequency=None, count=None, per=None, interval=None
-):
+    frequency: int | float | None = None,
+    count: int | float | None = None,
+    per: spec.Timelength | None = None,
+    interval: spec.Timelength | None = None,
+) -> spec.TimefrequencyFrequency:
     """create Timefrequency with representation TimefrequencyFrequency
 
     ## Inputs
@@ -61,8 +85,11 @@ def create_timefrequency_frequency(
 
 
 def create_timefrequency_count_per(
-    frequency=None, count=None, per=None, interval=None,
-):
+    frequency: int | float | None = None,
+    count: int | float | None = None,
+    per: spec.Timelength | None = None,
+    interval: spec.Timelength | None = None,
+) -> spec.TimefrequencyCountPer:
     """create Timefrequency with representation TimefrequencyCountPer
 
     ## Inputs
@@ -76,7 +103,7 @@ def create_timefrequency_count_per(
     """
 
     if frequency is not None:
-        return {'count': None, 'per': None}
+        return {'count': frequency, 'per': 1}
     if count is not None and per is not None:
         return {'count': count, 'per': per}
     elif interval is not None:
@@ -86,8 +113,11 @@ def create_timefrequency_count_per(
 
 
 def create_timefrequency_interval(
-    frequency=None, count=None, per=None, interval=None,
-):
+    frequency: int | float | None = None,
+    count: int | float | None = None,
+    per: spec.Timelength | None = None,
+    interval: spec.Timelength | None = None,
+) -> spec.TimefrequencyInterval:
     """create Timefrequency with representation TimefrequencyInterval
 
     ## Inputs
@@ -109,4 +139,3 @@ def create_timefrequency_interval(
         return {'interval': interval}
     else:
         raise Exception('specify either frequency, interval, or count and per')
-

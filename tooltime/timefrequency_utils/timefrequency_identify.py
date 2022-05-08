@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import typing
+from typing_extensions import TypeGuard
 
 from .. import exceptions
 from .. import spec
@@ -22,7 +25,9 @@ def detect_timefrequency_representation(
         )
 
 
-def is_timefrequency(timefrequency):
+def is_timefrequency(
+    timefrequency: typing.Any,
+) -> TypeGuard[spec.Timefrequency]:
     """return bool of whether input is Timefrequency"""
     try:
         detect_timefrequency_representation(timefrequency)
@@ -31,12 +36,16 @@ def is_timefrequency(timefrequency):
         return False
 
 
-def is_timefrequency_frequency(timefrequency):
+def is_timefrequency_frequency(
+    timefrequency: typing.Any,
+) -> TypeGuard[spec.TimefrequencyFrequency]:
     """return bool of whether input is TimefrequencyFrequency"""
     return isinstance(timefrequency, (int, float))
 
 
-def is_timefrequency_count_per(timefrequency):
+def is_timefrequency_count_per(
+    timefrequency: typing.Any,
+) -> TypeGuard[spec.TimefrequencyCountPer]:
     """return bool of whether input is TimefrequencyCountPer"""
     return (
         isinstance(timefrequency, dict)
@@ -48,7 +57,9 @@ def is_timefrequency_count_per(timefrequency):
     )
 
 
-def is_timefrequency_interval(timefrequency):
+def is_timefrequency_interval(
+    timefrequency: typing.Any,
+) -> TypeGuard[spec.TimefrequencyInterval]:
     """return bool of whether input is TimefrequencyInterval"""
     return (
         isinstance(timefrequency, dict)
@@ -56,4 +67,3 @@ def is_timefrequency_interval(timefrequency):
         and 'interval' in timefrequency
         and timelength_utils.is_timelength(timefrequency['interval'])
     )
-

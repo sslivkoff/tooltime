@@ -100,20 +100,20 @@ TimeperiodRepresentation = Literal[
 # # timefrequency
 #
 
-TimefreqeuncyFrequency = typing.Union[int, float]
+TimefrequencyFrequency = typing.Union[int, float]
 
 
 class TimefrequencyCountPer(TypedDict):
     count: typing.Union[int, float]
-    per: Timestamp
+    per: Timelength
 
 
 class TimefrequencyInterval(TypedDict):
-    interval: Timestamp
+    interval: Timelength
 
 
 Timefrequency = typing.Union[
-    TimefreqeuncyFrequency,
+    TimefrequencyFrequency,
     TimefrequencyCountPer,
     TimefrequencyInterval,
 ]

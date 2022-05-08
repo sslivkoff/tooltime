@@ -187,7 +187,10 @@ def timestamp_to_label(
     )
 
 
-def timestamp_to_iso(timestamp, from_representation=None):
+def timestamp_to_iso(
+    timestamp: spec.Timestamp,
+    from_representation: spec.TimestampRepresentation = None,
+) -> spec.TimestampISO:
     """convert timestamp to TimestampISO
 
     ## Inputs
@@ -322,4 +325,3 @@ def timestamp_to_numerical(
             raise Exception('bad type: ' + str(type(timestamp)))
     else:
         return timestamp_to_seconds_precise(timestamp)
-

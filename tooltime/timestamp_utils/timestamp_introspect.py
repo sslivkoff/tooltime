@@ -35,6 +35,8 @@ def summarize_timestamps(
 
         n_unique = len(set(timestamps_precise))
         resolution = timefrequency_utils.detect_resolution(timestamps_precise)
+        if resolution is None:
+            raise Exception('could not detect resolution')
         start = timestamp_convert.timestamp_to_label(timestamps_precise[0])
         end = timestamp_convert.timestamp_to_label(timestamps_precise[-1])
         duration = timestamps_precise[-1] - timestamps_precise[0]
@@ -77,7 +79,7 @@ def print_timestamp_summary(
     summary: typing.Optional[spec.TimestampSummary] = None,
     indent: typing.Optional[str] = None,
     print_kwargs: dict[str, typing.Any] = None
-):
+) -> None:
     """print summary of timestamps
 
     - specify either timestamps or summary
