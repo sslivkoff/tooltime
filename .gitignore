@@ -6,4 +6,5 @@ dist/
 notebooks/
 future/
 pyproject.toml
-.hypothesis/*
+.hypothesis/
+test/.hypothesis
