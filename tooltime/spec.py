@@ -33,6 +33,14 @@ TimestampStrRepresentation = Literal[
     'TimestampLabel',
     'TimestampISO',
 ]
+TimestampExtendedRepresentation = Literal[
+    'TimestampSeconds',
+    'TimestampSecondsPrecise',
+    'TimestampLabel',
+    'TimestampISO',
+    'TimestampDatetime',
+    'TimestampDate',
+]
 
 
 TimestampSummary = typing.Dict[str, typing.Any]
