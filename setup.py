@@ -14,13 +14,16 @@ setuptools.setup(
     url='https://github.com/sslivkoff/tooltime',
     packages=setuptools.find_packages(),
     install_requires=[
-        'numpy',
-        'pandas',
         'typing_extensions',
     ],
+    extras_require={
+        'full': [
+            'numpy',
+            'pandas',
+        ],
+    },
     python_requires='>=3.6',
     package_data={
         'tooltime': ['py.typed'],
     },
 )
-
