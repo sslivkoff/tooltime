@@ -61,6 +61,15 @@ def convert_timestamp(
     ...
 
 
+@typing.overload
+def convert_timestamp(
+    timestamp: spec.Timestamp,
+    to_representation: typing.Literal['TimestampDate'],
+    from_representation: typing.Optional[spec.TimestampRepresentation] = None,
+) -> str:
+    ...
+
+
 def convert_timestamp(
     timestamp: spec.Timestamp,
     to_representation: spec.TimestampRepresentation,
@@ -116,6 +125,8 @@ def convert_timestamp(
         return timestamp_seconds_to_datetime(timestamp_seconds)
     elif to_representation == 'TimestampDate':
         return timestamp_seconds_to_iso(timestamp_seconds)[:10]
+    elif to_representation == 'TimestampISOPretty':
+        return timestamp_seconds_to_iso(timestamp_seconds).replace('T', ' ')
     else:
         raise Exception(
             'unknown timestamp representation: ' + str(to_representation)

@@ -38,6 +38,7 @@ TimestampExtendedRepresentation = Literal[
     'TimestampSecondsPrecise',
     'TimestampLabel',
     'TimestampISO',
+    'TimestampISOPretty',
     'TimestampDatetime',
     'TimestampDate',
 ]
