@@ -177,9 +177,7 @@ PluralTimeUnit = Literal[
 
 
 def to_numeric(value: typing.SupportsFloat) -> typing.Union[int, float]:
-    if isinstance(value, typing.SupportsInt) and type(
-        value
-    ).__name__.startswith('int'):
+    if hasattr(value, '__int__') and type(value).__name__.startswith('int'):
         return int(value)
     else:
         return float(value)
