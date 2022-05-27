@@ -23,6 +23,12 @@ def detect_timestamp_representation(
         return 'TimestampLabel'
     elif is_timestamp_iso(timestamp):
         return 'TimestampISO'
+    elif is_timestamp_iso_pretty(timestamp):
+        return 'TimestampISOPretty'
+    elif is_timestamp_date(timestamp):
+        return 'TimestampDate'
+    elif is_timestamp_year(timestamp):
+        return 'TimestampYear'
     elif is_timestamp_datetime(timestamp):
         return 'TimestampDatetime'
     else:
@@ -84,9 +90,42 @@ def is_timestamp_iso(
         return False
 
 
+def is_timestamp_iso_pretty(
+    timestamp: typing.Any,
+) -> TypeGuard[spec.TimestampISOPretty]:
+    try:
+        timestamp_convert.timestamp_iso_pretty_to_seconds(
+            typing.cast(spec.TimestampISO, timestamp)
+        )
+        return True
+    except Exception:
+        return False
+
+
+def is_timestamp_date(
+    timestamp: typing.Any,
+) -> TypeGuard[spec.TimestampDate]:
+    import re
+
+    return (
+        isinstance(timestamp, str)
+        and re.fullmatch('[0-9]{4}-[0-9]{2}-[0-9]{2}', timestamp) is not None
+    )
+
+
+def is_timestamp_year(
+    timestamp: typing.Any,
+) -> TypeGuard[spec.TimestampDate]:
+    import re
+
+    return (
+        isinstance(timestamp, str)
+        and re.fullmatch('[0-9]{4}', timestamp) is not None
+    )
+
+
 def is_timestamp_datetime(
     timestamp: typing.Any,
 ) -> TypeGuard[spec.TimestampDatetime]:
     """return bool of whether input is TimestampDatetime"""
     return isinstance(timestamp, datetime.datetime)
-

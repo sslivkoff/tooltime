@@ -55,9 +55,9 @@ def convert_timestamp(
 @typing.overload
 def convert_timestamp(
     timestamp: spec.Timestamp,
-    to_representation: typing.Literal['TimestampDatetime'],
+    to_representation: typing.Literal['TimestampISOPretty'],
     from_representation: typing.Optional[spec.TimestampRepresentation] = None,
-) -> spec.TimestampDatetime:
+) -> spec.TimestampISOPretty:
     ...
 
 
@@ -66,7 +66,25 @@ def convert_timestamp(
     timestamp: spec.Timestamp,
     to_representation: typing.Literal['TimestampDate'],
     from_representation: typing.Optional[spec.TimestampRepresentation] = None,
-) -> str:
+) -> spec.TimestampDate:
+    ...
+
+
+@typing.overload
+def convert_timestamp(
+    timestamp: spec.Timestamp,
+    to_representation: typing.Literal['TimestampYear'],
+    from_representation: typing.Optional[spec.TimestampRepresentation] = None,
+) -> spec.TimestampYear:
+    ...
+
+
+@typing.overload
+def convert_timestamp(
+    timestamp: spec.Timestamp,
+    to_representation: typing.Literal['TimestampDatetime'],
+    from_representation: typing.Optional[spec.TimestampRepresentation] = None,
+) -> spec.TimestampDatetime:
     ...
 
 
@@ -105,6 +123,12 @@ def convert_timestamp(
         timestamp_seconds = timestamp_label_to_seconds(timestamp)
     elif timestamp_identify.is_timestamp_iso(timestamp):
         timestamp_seconds = timestamp_iso_to_seconds(timestamp)
+    elif timestamp_identify.is_timestamp_iso_pretty(timestamp):
+        timestamp_seconds = timestamp_iso_pretty_to_seconds(timestamp)
+    elif timestamp_identify.is_timestamp_date(timestamp):
+        timestamp_seconds = timestamp_date_to_seconds(timestamp)
+    elif timestamp_identify.is_timestamp_year(timestamp):
+        timestamp_seconds = timestamp_year_to_seconds(timestamp)
     elif timestamp_identify.is_timestamp_datetime(timestamp):
         timestamp_seconds = timestamp_datetime_to_seconds(timestamp)
     else:
@@ -121,12 +145,14 @@ def convert_timestamp(
         return timestamp_seconds_to_label(timestamp_seconds)
     elif to_representation == 'TimestampISO':
         return timestamp_seconds_to_iso(timestamp_seconds)
+    elif to_representation == 'TimestampISOPretty':
+        return timestamp_seconds_to_iso_pretty(timestamp_seconds)
+    elif to_representation == 'TimestampDate':
+        return timestamp_seconds_to_date(timestamp_seconds)[:10]
+    elif to_representation == 'TimestampYear':
+        return timestamp_seconds_to_year(timestamp_seconds)
     elif to_representation == 'TimestampDatetime':
         return timestamp_seconds_to_datetime(timestamp_seconds)
-    elif to_representation == 'TimestampDate':
-        return timestamp_seconds_to_iso(timestamp_seconds)[:10]
-    elif to_representation == 'TimestampISOPretty':
-        return timestamp_seconds_to_iso(timestamp_seconds).replace('T', ' ')
     else:
         raise Exception(
             'unknown timestamp representation: ' + str(to_representation)
@@ -218,6 +244,66 @@ def timestamp_to_iso(
     )
 
 
+def timestamp_to_iso_pretty(
+    timestamp: spec.Timestamp,
+    from_representation: spec.TimestampRepresentation = None,
+) -> spec.TimestampISOPretty:
+    """convert timestamp to TimestampISOPretty
+
+    ## Inputs
+    - timestamp: Timestamp
+    - from_representation: str representation name of input timestamp
+
+    ## Returns
+    - TimestampISOPretty timestamp
+    """
+    return convert_timestamp(
+        timestamp,
+        to_representation='TimestampISOPretty',
+        from_representation=from_representation,
+    )
+
+
+def timestamp_to_date(
+    timestamp: spec.Timestamp,
+    from_representation: spec.TimestampRepresentation = None,
+) -> spec.TimestampDate:
+    """convert timestamp to TimestampDate
+
+    ## Inputs
+    - timestamp: Timestamp
+    - from_representation: str representation name of input timestamp
+
+    ## Returns
+    - TimestampDate timestamp
+    """
+    return convert_timestamp(
+        timestamp,
+        to_representation='TimestampDate',
+        from_representation=from_representation,
+    )
+
+
+def timestamp_to_year(
+    timestamp: spec.Timestamp,
+    from_representation: spec.TimestampRepresentation = None,
+) -> spec.TimestampYear:
+    """convert timestamp to TimestampYear
+
+    ## Inputs
+    - timestamp: Timestamp
+    - from_representation: str representation name of input timestamp
+
+    ## Returns
+    - TimestampYear timestamp
+    """
+    return convert_timestamp(
+        timestamp,
+        to_representation='TimestampYear',
+        from_representation=from_representation,
+    )
+
+
 def timestamp_to_datetime(
     timestamp: spec.Timestamp,
     from_representation: spec.TimestampRepresentation = None,
@@ -264,6 +350,27 @@ def timestamp_seconds_to_iso(
     iso_format = "%Y-%m-%dT%H:%M:%SZ"
     iso = dt.strftime(iso_format)
     return iso
+
+
+def timestamp_seconds_to_iso_pretty(
+    timestamp_seconds: spec.TimestampSecondsRaw,
+) -> spec.TimestampISOPretty:
+    """convert seconds to TimestampISOPretty"""
+    return timestamp_seconds_to_iso(timestamp_seconds).replace('T', ' ')
+
+
+def timestamp_seconds_to_date(
+    timestamp_seconds: spec.TimestampSecondsRaw,
+) -> spec.TimestampDate:
+    dt = timestamp_seconds_to_datetime(timestamp_seconds)
+    return str(dt.year) + '-' + ('%.02d' % dt.month) + '-' + ('%.02d' % dt.day)
+
+
+def timestamp_seconds_to_year(
+    timestamp_seconds: spec.TimestampSecondsRaw,
+) -> spec.TimestampDate:
+    dt = timestamp_seconds_to_datetime(timestamp_seconds)
+    return str(dt.year)
 
 
 def timestamp_seconds_to_datetime(
@@ -317,6 +424,45 @@ def timestamp_iso_to_seconds(
     seconds = utc_dt.timestamp()
 
     return seconds
+
+
+def timestamp_iso_pretty_to_seconds(
+    timestamp_iso_pretty: spec.TimestampISOPretty,
+) -> spec.TimestampSecondsRaw:
+    """convert TimestampISOPretty to seconds"""
+
+    return timestamp_iso_to_seconds(timestamp_iso_pretty.replace(' ', 'T'))
+
+
+def timestamp_date_to_seconds(
+    timestamp_date: spec.TimestampDate,
+) -> spec.TimestampSecondsRaw:
+
+    import datetime
+
+    year, month, day = timestamp_date.split('-')
+    dt = datetime.datetime(
+        year=int(year),
+        month=int(month),
+        day=int(day),
+        tzinfo=datetime.timezone.utc,
+    )
+    return dt.timestamp()
+
+
+def timestamp_year_to_seconds(
+    timestamp_date: spec.TimestampYear,
+) -> spec.TimestampSecondsRaw:
+
+    import datetime
+
+    dt = datetime.datetime(
+        year=int(timestamp_date),
+        month=1,
+        day=1,
+        tzinfo=datetime.timezone.utc,
+    )
+    return dt.timestamp()
 
 
 def timestamp_datetime_to_seconds(

@@ -70,6 +70,54 @@ def create_timestamp_iso(
     return timestamp_convert.timestamp_seconds_to_iso(seconds)
 
 
+def create_timestamp_iso_pretty(
+    seconds: typing.SupportsFloat = None,
+) -> spec.TimestampISOPretty:
+    """create Timestamp with representation TimestampISOPretty"""
+    return create_timestamp_iso(seconds).replace('T', ' ')
+
+
+def create_timestamp_date(
+    seconds: typing.SupportsFloat = None,
+) -> spec.TimestampDate:
+    """create Timestamp with representation TimestampDate
+
+    does not round to nearest date, takes floor of seconds to previous date
+    """
+    import datetime
+
+    if seconds is None:
+        dt = datetime.datetime.now(tz=datetime.timezone.utc)
+    else:
+        dt = datetime.datetime.fromtimestamp(
+            float(seconds), tz=datetime.timezone.utc
+        )
+
+    year = dt.year
+    month = dt.month
+    day = dt.day
+    return str(year) + '-' + ('%.02d' % month) + '-' + ('%.02d' % day)
+
+
+def create_timestamp_year(
+    seconds: typing.SupportsFloat = None,
+) -> spec.TimestampYear:
+    """create Timestamp with representation TimestampDate
+
+    does not round to nearest year, takes floor of seconds to previous year
+    """
+    import datetime
+
+    if seconds is None:
+        dt = datetime.datetime.now(tz=datetime.timezone.utc)
+    else:
+        dt = datetime.datetime.fromtimestamp(
+            float(seconds), tz=datetime.timezone.utc
+        )
+
+    return str(dt.year)
+
+
 def create_timestamp_datetime(
     seconds: typing.SupportsFloat = None,
 ) -> spec.TimestampDatetime:
@@ -77,4 +125,3 @@ def create_timestamp_datetime(
     if seconds is None:
         seconds = time.time()
     return timestamp_convert.timestamp_seconds_to_datetime(seconds)
-

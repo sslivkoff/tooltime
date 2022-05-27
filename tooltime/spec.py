@@ -14,12 +14,19 @@ TimestampSeconds = int
 TimestampSecondsPrecise = float
 TimestampLabel = str
 TimestampISO = str
+TimestampISOPretty = str
+TimestampDate = str  # '1984-01-01'
+TimestampYear = str  # '1984'
 TimestampDatetime = datetime.datetime
+
 Timestamp = typing.Union[
     TimestampSeconds,
     TimestampSecondsPrecise,
     TimestampLabel,
     TimestampISO,
+    TimestampISOPretty,
+    TimestampDate,
+    TimestampYear,
     TimestampDatetime,
 ]
 TimestampRepresentation = Literal[
@@ -27,22 +34,19 @@ TimestampRepresentation = Literal[
     'TimestampSecondsPrecise',
     'TimestampLabel',
     'TimestampISO',
+    'TimestampISOPretty',
+    'TimestampDate',
+    'TimestampYear',
     'TimestampDatetime',
 ]
 TimestampStrRepresentation = Literal[
     'TimestampLabel',
     'TimestampISO',
-]
-TimestampExtendedRepresentation = Literal[
-    'TimestampSeconds',
-    'TimestampSecondsPrecise',
-    'TimestampLabel',
-    'TimestampISO',
     'TimestampISOPretty',
-    'TimestampDatetime',
     'TimestampDate',
+    'TimestampYear',
 ]
-
+TimestampExtendedRepresentation = TimestampRepresentation
 
 TimestampSummary = typing.Dict[str, typing.Any]
 
@@ -178,7 +182,7 @@ PluralTimeUnit = Literal[
 
 def to_numeric(value: typing.SupportsFloat) -> typing.Union[int, float]:
     if hasattr(value, '__int__') and type(value).__name__.startswith('int'):
-        return int(value)
+        return int(value)  # type: ignore
     else:
         return float(value)
 
@@ -248,6 +252,7 @@ equivalent_sets = {
             'TimestampSecondsPrecise': 1600000000.0,
             'TimestampLabel': '20200913_122640Z',
             'TimestampISO': '2020-09-13T12:26:40Z',
+            'TimestampISOPretty': '2020-09-13 12:26:40Z',
             'TimestampDatetime': datetime.datetime(
                 second=40,
                 minute=26,
@@ -255,6 +260,22 @@ equivalent_sets = {
                 day=13,
                 month=9,
                 year=2020,
+                tzinfo=datetime.timezone.utc,
+            ),
+        },
+        {
+            'TimestampLabel': '19840101_000000Z',
+            'TimestampDate': '1984-01-01',
+            'TimestampYear': '1984',
+            'TimestampISO': '1984-01-01T00:00:00Z',
+            'TimestampISOPretty': '1984-01-01 00:00:00Z',
+            'TimestampDatetime': datetime.datetime(
+                second=0,
+                minute=0,
+                hour=0,
+                day=1,
+                month=1,
+                year=1984,
                 tzinfo=datetime.timezone.utc,
             ),
         },
