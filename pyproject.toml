@@ -1,0 +1,26 @@
+
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "tooltime"
+readme = "README.md"
+requires-python = ">=3.7"
+dynamic = ["version", "description"]
+license = {file = "LICENSE"}
+dependencies = [
+    "typing-extensions>=4.0.0"
+]
+
+[project.optional-dependencies]
+full = [
+    "numpy",
+    "pandas",
+]
+
+[project.urls]
+Source = "https://github.com/sslivkoff/tooltime"
+
+[tool.mypy]
+files = ["tooltime"]
