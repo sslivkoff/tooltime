@@ -1,5 +1,27 @@
+from __future__ import annotations
+
+import time
+
 from .. import spec
+from .. import timestamp_utils
 from . import timelength_convert
+
+
+def get_age(
+    timestamp: spec.Timestamp,
+    to_representation: spec.TimelengthRepresentation = None,
+    *,
+    precise: bool = False,
+) -> spec.Timelength:
+    now = time.time()
+    if not precise:
+        now = int(now)
+        seconds: int | float = now - timestamp_utils.timestamp_to_seconds(
+            timestamp
+        )
+    else:
+        seconds = now - timestamp_utils.timestamp_to_seconds_precise(timestamp)
+    return create_timelength(seconds, to_representation=to_representation)
 
 
 def create_timelength(
@@ -87,4 +109,3 @@ def create_timelength_timedelta(
 ) -> spec.TimelengthTimedelta:
     """create Timelength with representation TimelengthTimedelta"""
     return timelength_convert.timelength_to_timedelta(timelength)
-
