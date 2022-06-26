@@ -183,4 +183,3 @@ def get_standard_intervals(
     timestamps = [int(interval.timestamp()) for interval in intervals]
 
     return timestamps
-

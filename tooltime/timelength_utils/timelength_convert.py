@@ -560,3 +560,10 @@ def timelength_to_pandas_timelength(
     pandas_unit = timelength_units.get_english_to_pandas_units()[unit_name]
     return number + pandas_unit
 
+
+def timelength_to_numerical(timelength: spec.Timelength) -> int | float:
+    seconds_precise = timelength_to_seconds_precise(timelength)
+    if math.isclose(seconds_precise, int(seconds_precise)):
+        return int(seconds_precise)
+    else:
+        return seconds_precise
