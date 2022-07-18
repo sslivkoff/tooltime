@@ -1,10 +1,45 @@
 from __future__ import annotations
 
+import typing
+
+if typing.TYPE_CHECKING:
+    from typing_extensions import Literal
+
 import time
 
 from .. import spec
 from .. import timestamp_utils
 from . import timelength_convert
+
+
+@typing.overload
+def get_age(
+    timestamp: spec.Timestamp,
+    to_representation: Literal['TimelengthPhrase'],
+    *,
+    precise: bool = False,
+) -> spec.TimelengthPhrase:
+    ...
+
+
+@typing.overload
+def get_age(
+    timestamp: spec.Timestamp,
+    to_representation: Literal['TimelengthSeconds'],
+    *,
+    precise: bool = False,
+) -> spec.TimelengthSeconds:
+    ...
+
+
+@typing.overload
+def get_age(
+    timestamp: spec.Timestamp,
+    to_representation: Literal['TimelengthSecondsPrecise'],
+    *,
+    precise: bool = False,
+) -> spec.TimelengthSecondsPrecise:
+    ...
 
 
 def get_age(
