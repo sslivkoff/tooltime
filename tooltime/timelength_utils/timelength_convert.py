@@ -328,7 +328,7 @@ def timelength_seconds_to_label(
     if base_unit is not None:
         if base_unit not in base_units:
             raise Exception('invalid base unit: ' + str(base_unit))
-        candidates = {base_unit: base_units[base_unit]}
+        candidates: typing.Mapping[str, int] = {base_unit: base_units[base_unit]}
     else:
         candidates = base_units
 
