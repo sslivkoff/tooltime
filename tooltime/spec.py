@@ -18,6 +18,9 @@ TimestampISOPretty = str
 TimestampDate = str  # '1984-01-01'
 TimestampYear = str  # '1984'
 TimestampDatetime = datetime.datetime
+TimestampDateCompact = str
+TimestampMonth = str
+TimestampMonthCompact = str
 
 Timestamp = typing.Union[
     TimestampSeconds,
@@ -38,6 +41,9 @@ TimestampRepresentation = Literal[
     'TimestampDate',
     'TimestampYear',
     'TimestampDatetime',
+    'TimestampDateCompact',
+    'TimestampMonth',
+    'TimestampMonthCompact',
 ]
 TimestampStrRepresentation = Literal[
     'TimestampLabel',
@@ -45,6 +51,9 @@ TimestampStrRepresentation = Literal[
     'TimestampISOPretty',
     'TimestampDate',
     'TimestampYear',
+    'TimestampDateCompact',
+    'TimestampMonth',
+    'TimestampMonthCompact',
 ]
 TimestampExtendedRepresentation = TimestampRepresentation
 
@@ -266,6 +275,9 @@ equivalent_sets = {
         {
             'TimestampLabel': '19840101_000000Z',
             'TimestampDate': '1984-01-01',
+            'TimestampDateCompact': '19840101',
+            'TimestampMonth': '1984-01',
+            'TimestampMonthCompact': '198401',
             'TimestampYear': '1984',
             'TimestampISO': '1984-01-01T00:00:00Z',
             'TimestampISOPretty': '1984-01-01 00:00:00Z',

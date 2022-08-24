@@ -31,6 +31,12 @@ def detect_timestamp_representation(
         return 'TimestampYear'
     elif is_timestamp_datetime(timestamp):
         return 'TimestampDatetime'
+    elif is_timestamp_date_compact(timestamp):
+        return 'TimestampDateCompact'
+    elif is_timestamp_month(timestamp):
+        return 'TimestampMonth'
+    elif is_timestamp_month_compact(timestamp):
+        return 'TimestampMonthCompact'
     else:
         raise exceptions.RepresentationDetectionException(
             'could not detect Timestamp representation: ' + str(timestamp)
@@ -129,3 +135,35 @@ def is_timestamp_datetime(
 ) -> TypeGuard[spec.TimestampDatetime]:
     """return bool of whether input is TimestampDatetime"""
     return isinstance(timestamp, datetime.datetime)
+
+
+def is_timestamp_date_compact(
+    timestamp: typing.Any,
+) -> TypeGuard[spec.TimestampDateCompact]:
+    import re
+
+    return (
+        isinstance(timestamp, str)
+        and len(timestamp) == 8
+        and re.fullmatch('[0-9]{8}', timestamp) is not None
+    )
+
+
+def is_timestamp_month(timestamp: typing.Any) -> TypeGuard[spec.TimestampMonth]:
+    import re
+
+    return (
+        isinstance(timestamp, str)
+        and re.fullmatch('[0-9]{4}-[0-9]{2}', timestamp) is not None
+    )
+
+
+def is_timestamp_month_compact(
+    timestamp: typing.Any,
+) -> TypeGuard[spec.TimestampMonthCompact]:
+    import re
+
+    return (
+        isinstance(timestamp, str)
+        and re.fullmatch('[0-9]{6}', timestamp) is not None
+    )

@@ -88,6 +88,33 @@ def convert_timestamp(
     ...
 
 
+@typing.overload
+def convert_timestamp(
+    timestamp: spec.Timestamp,
+    to_representation: typing.Literal['TimestampDateCompact'],
+    from_representation: typing.Optional[spec.TimestampRepresentation] = None,
+) -> spec.TimestampDateCompact:
+    ...
+
+
+@typing.overload
+def convert_timestamp(
+    timestamp: spec.Timestamp,
+    to_representation: typing.Literal['TimestampMonth'],
+    from_representation: typing.Optional[spec.TimestampRepresentation] = None,
+) -> spec.TimestampMonth:
+    ...
+
+
+@typing.overload
+def convert_timestamp(
+    timestamp: spec.Timestamp,
+    to_representation: typing.Literal['TimestampMonthCompact'],
+    from_representation: typing.Optional[spec.TimestampRepresentation] = None,
+) -> spec.TimestampMonthCompact:
+    ...
+
+
 def convert_timestamp(
     timestamp: spec.Timestamp,
     to_representation: spec.TimestampRepresentation,
@@ -131,6 +158,12 @@ def convert_timestamp(
         timestamp_seconds = timestamp_year_to_seconds(timestamp)
     elif timestamp_identify.is_timestamp_datetime(timestamp):
         timestamp_seconds = timestamp_datetime_to_seconds(timestamp)
+    elif timestamp_identify.is_timestamp_date_compact(timestamp):
+        timestamp_seconds = timestamp_date_compact_to_seconds(timestamp)
+    elif timestamp_identify.is_timestamp_month(timestamp):
+        timestamp_seconds = timestamp_month_to_seconds(timestamp)
+    elif timestamp_identify.is_timestamp_month_compact(timestamp):
+        timestamp_seconds = timestamp_month_compact_to_seconds(timestamp)
     else:
         raise Exception(
             'unknown timestamp representation: ' + str(from_representation)
@@ -153,6 +186,12 @@ def convert_timestamp(
         return timestamp_seconds_to_year(timestamp_seconds)
     elif to_representation == 'TimestampDatetime':
         return timestamp_seconds_to_datetime(timestamp_seconds)
+    elif to_representation == 'TimestampDateCompact':
+        return timestamp_seconds_to_date_compact(timestamp_seconds)
+    elif to_representation == 'TimestampMonth':
+        return timestamp_seconds_to_month(timestamp_seconds)
+    elif to_representation == 'TimestampMonthCompact':
+        return timestamp_seconds_to_month_compact(timestamp_seconds)
     else:
         raise Exception(
             'unknown timestamp representation: ' + str(to_representation)
@@ -324,6 +363,39 @@ def timestamp_to_datetime(
     )
 
 
+def timestamp_to_date_compact(
+    timestamp: spec.Timestamp,
+    from_representation: spec.TimestampRepresentation = None,
+) -> spec.TimestampDateCompact:
+    return convert_timestamp(
+        timestamp,
+        to_representation='TimestampDateCompact',
+        from_representation=from_representation,
+    )
+
+
+def timestamp_to_month(
+    timestamp: spec.Timestamp,
+    from_representation: spec.TimestampRepresentation = None,
+) -> spec.TimestampMonth:
+    return convert_timestamp(
+        timestamp,
+        to_representation='TimestampMonth',
+        from_representation=from_representation,
+    )
+
+
+def timestamp_to_month_compact(
+    timestamp: spec.Timestamp,
+    from_representation: spec.TimestampRepresentation = None,
+) -> spec.TimestampMonthCompact:
+    return convert_timestamp(
+        timestamp,
+        to_representation='TimestampMonthCompact',
+        from_representation=from_representation,
+    )
+
+
 #
 # # specific conversion functions, from seconds
 #
@@ -380,6 +452,27 @@ def timestamp_seconds_to_datetime(
     return datetime.datetime.fromtimestamp(
         float(timestamp_seconds), datetime.timezone.utc
     )
+
+
+def timestamp_seconds_to_date_compact(
+    timestamp_seconds: spec.TimestampSecondsRaw,
+) -> spec.TimestampDateCompact:
+    dt = timestamp_seconds_to_datetime(timestamp_seconds)
+    return str(dt.year) + ('%.02d' % dt.month) + ('%.02d' % dt.day)
+
+
+def timestamp_seconds_to_month(
+    timestamp_seconds: spec.TimestampSecondsRaw,
+) -> spec.TimestampMonth:
+    dt = timestamp_seconds_to_datetime(timestamp_seconds)
+    return str(dt.year) + '-' + ('%.02d' % dt.month)
+
+
+def timestamp_seconds_to_month_compact(
+    timestamp_seconds: spec.TimestampSecondsRaw,
+) -> spec.TimestampMonthCompact:
+    dt = timestamp_seconds_to_datetime(timestamp_seconds)
+    return str(dt.year) + ('%.02d' % dt.month)
 
 
 #
@@ -482,3 +575,54 @@ def timestamp_to_numerical(
             raise Exception('bad type: ' + str(type(timestamp)))
     else:
         return timestamp_to_seconds_precise(timestamp)
+
+
+def timestamp_date_compact_to_seconds(
+    timestamp_date_compact: spec.TimestampDateCompact,
+) -> spec.TimestampSecondsRaw:
+
+    import datetime
+
+    year = timestamp_date_compact[:4]
+    month = timestamp_date_compact[4:6]
+    day = timestamp_date_compact[6:8]
+    dt = datetime.datetime(
+        year=int(year),
+        month=int(month),
+        day=int(day),
+        tzinfo=datetime.timezone.utc,
+    )
+    return dt.timestamp()
+
+
+def timestamp_month_to_seconds(
+    timestamp_month: spec.TimestampMonth,
+) -> spec.TimestampSecondsRaw:
+
+    import datetime
+
+    year, month = timestamp_month.split('-')
+    dt = datetime.datetime(
+        year=int(year),
+        month=int(month),
+        day=1,
+        tzinfo=datetime.timezone.utc,
+    )
+    return dt.timestamp()
+
+
+def timestamp_month_compact_to_seconds(
+    timestamp_month_compact: spec.TimestampMonthCompact,
+) -> spec.TimestampSecondsRaw:
+
+    import datetime
+
+    year = timestamp_month_compact[:4]
+    month = timestamp_month_compact[4:6]
+    dt = datetime.datetime(
+        year=int(year),
+        month=int(month),
+        day=1,
+        tzinfo=datetime.timezone.utc,
+    )
+    return dt.timestamp()

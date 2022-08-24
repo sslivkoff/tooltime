@@ -111,7 +111,14 @@ each of the 4 time datatypes has multiple interconvertible representations, and 
 | `TimestampSecondsPrecise`  | `float` seconds since UTC epoch    | `1600000000.0`            |
 | `TimestampLabel`           | `str` in format `'%Y%m%d_%H%M%SZ'` | `'20200913_122640Z'`      |
 | `TimestampISO`             | `str` in ISO 8601 format           | `'2020-09-13T12:26:40Z'`  |
+| `TimestampISOPretty`       | `str` in ISO 8601 format, prettier | `'2020-09-13 12:26:40Z'`  |
 | `TimestampDatetime`        | `datetime.datetime` object         | `datetime.datetime.now()` |
+| `TimestampYear`            | `str` of year                      | `2020`                    |
+| `TimestampMonth`           | `str` of dashed year and month     | `2020-09`                 |
+| `TimestampMonthCompact`    | `str` of plain year and month      | `202009`                  |
+| `TimestampDate`            | `str` of dashed date               | `2020-09-13`              |
+| `TimestampDateCompact`     | `str` of plain date                | `20200913`                |
+
 
 ##### `Timelength` Representations
 |                            | python type                                                              | example |
