@@ -37,6 +37,8 @@ def detect_timestamp_representation(
         return 'TimestampMonth'
     elif is_timestamp_month_compact(timestamp):
         return 'TimestampMonthCompact'
+    elif is_timestamp_seconds_string(timestamp):
+        return 'TimestampSecondsString'
     else:
         raise exceptions.RepresentationDetectionException(
             'could not detect Timestamp representation: ' + str(timestamp)
@@ -166,4 +168,15 @@ def is_timestamp_month_compact(
     return (
         isinstance(timestamp, str)
         and re.fullmatch('[0-9]{6}', timestamp) is not None
+    )
+
+
+def is_timestamp_seconds_string(
+    timestamp: typing.Any,
+) -> TypeGuard[spec.TimestampSecondsString]:
+    import re
+
+    return (
+        isinstance(timestamp, str)
+        and re.fullmatch('[0-9]{9,10}', timestamp) is not None
     )

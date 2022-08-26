@@ -21,6 +21,7 @@ TimestampDatetime = datetime.datetime
 TimestampDateCompact = str
 TimestampMonth = str
 TimestampMonthCompact = str
+TimestampSecondsString = str
 
 Timestamp = typing.Union[
     TimestampSeconds,
@@ -31,6 +32,10 @@ Timestamp = typing.Union[
     TimestampDate,
     TimestampYear,
     TimestampDatetime,
+    TimestampDateCompact,
+    TimestampMonth,
+    TimestampMonthCompact,
+    TimestampSecondsString,
 ]
 TimestampRepresentation = Literal[
     'TimestampSeconds',
@@ -44,6 +49,7 @@ TimestampRepresentation = Literal[
     'TimestampDateCompact',
     'TimestampMonth',
     'TimestampMonthCompact',
+    'TimestampSecondsString',
 ]
 TimestampStrRepresentation = Literal[
     'TimestampLabel',
@@ -54,6 +60,7 @@ TimestampStrRepresentation = Literal[
     'TimestampDateCompact',
     'TimestampMonth',
     'TimestampMonthCompact',
+    'TimestampSecondsString',
 ]
 TimestampExtendedRepresentation = TimestampRepresentation
 
@@ -258,6 +265,7 @@ equivalent_sets = {
     'Timestamp': [
         {
             'TimestampSeconds': 1600000000,
+            'TimestampSecondsString': '1600000000',
             'TimestampSecondsPrecise': 1600000000.0,
             'TimestampLabel': '20200913_122640Z',
             'TimestampISO': '2020-09-13T12:26:40Z',
