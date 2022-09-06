@@ -16,16 +16,35 @@ def parse_timeslice(
     include_misaligned_bound: bool = True,
     include_misaligned_overflow: bool = False,
 ) -> typing.Sequence[int | float]:
+    """
+
+    If one of the bounds is a timelength, use that timelength as the range size:
+        15m:2022-01-01   (15 minutes before 2022-01-01) to (2022-01-01)
+        2022-01-01:15m   (2022-01-01) to (15 minutes after 2022-01-01)
+    If both of the bounds are timelengths, use current time as reference point
+        15m:10m:1m       15 minutes from now to 10 minutes from now
+
+    If end specification is missing, use now as end
+        15m:             15 minutes ago to now
+        15m::1m          15 minutes ago to now in 1 minute intervals
+        2022-01-01:      2022-01-01 to now
+
+    If plain number used, interpret as a timestamp not a timelength
+    """
 
     if raw_timeslice.count(':') == 0:
         if n is None and interval is None:
-            raise Exception('only start and end specified, must also provide n or interval')
+            raise Exception(
+                'only start and end specified, must also provide n or interval'
+            )
         start = raw_timeslice
         end = ''
 
     elif raw_timeslice.count(':') == 1:
         if n is None and interval is None:
-            raise Exception('only start and end specified, must also provide n or interval')
+            raise Exception(
+                'only start and end specified, must also provide n or interval'
+            )
         start, end = raw_timeslice.split(':')
 
     elif raw_timeslice.count(':') == 2:
@@ -40,26 +59,38 @@ def parse_timeslice(
     else:
         raise Exception('cannot parse raw timeslice: ' + str(raw_timeslice))
 
-    now = int(time.time())
+    start_is_timelength = (
+        start != ''
+        and not start.isdigit()
+        and timelength_utils.is_timelength(start)
+    )
+    end_is_timelength = (
+        end != '' and not end.isdigit() and timelength_utils.is_timelength(end)
+    )
 
-    # convert start to a timestamp
+    # replace blank end with now
+    now = int(time.time())
     if start == '':
         raise Exception('must specify start time')
-    try:
-        start_timelength = timelength_utils.timelength_to_seconds(start)
-        start_time = now - start_timelength
-    except Exception:
-        start_time = timestamp_convert.timestamp_to_seconds(start)
-
-    # convert end to a timestamp
     if end == '':
-        end_time = now
+        end = str(now)
+
+    if start_is_timelength and end_is_timelength:
+        start_time = now - timelength_utils.timelength_to_seconds(start)
+        end_time = now - timelength_utils.timelength_to_seconds(end)
+    elif start_is_timelength and not end_is_timelength:
+        end_time = timestamp_convert.timestamp_to_seconds(end)
+        start_time = end_time - timelength_utils.timelength_to_seconds(start)
+    elif not start_is_timelength and end_is_timelength:
+        start_time = timestamp_convert.timestamp_to_seconds(start)
+        end_time = start_time + timelength_utils.timelength_to_seconds(end)
     else:
-        try:
-            end_timelength = timelength_utils.timelength_to_seconds(end)
-            end_time = now - end_timelength
-        except Exception:
-            end_time = timestamp_convert.timestamp_to_seconds(end)
+        start_time = timestamp_convert.timestamp_to_seconds(start)
+        end_time = timestamp_convert.timestamp_to_seconds(end)
+
+    # validate that start time comes after end time
+    if start_time > end_time:
+        raise Exception('start time must be less than or equal to end time')
 
     return sample_timestamps(
         start_time=start_time,
