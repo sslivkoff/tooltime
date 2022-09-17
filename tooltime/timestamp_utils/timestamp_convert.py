@@ -601,10 +601,7 @@ def timestamp_to_numerical(
     timestamp: spec.Timestamp,
 ) -> typing.Union[spec.TimestampSeconds, spec.TimestampSecondsPrecise]:
     if type(timestamp).__name__.startswith('int'):
-        if isinstance(timestamp, typing.SupportsInt):
-            return int(timestamp)
-        else:
-            raise Exception('bad type: ' + str(type(timestamp)))
+        return int(timestamp)  # type: ignore
     else:
         return timestamp_to_seconds_precise(timestamp)
 
