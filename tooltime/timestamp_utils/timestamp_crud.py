@@ -7,6 +7,12 @@ from .. import spec
 from . import timestamp_convert
 
 
+def now(
+    representation: spec.TimestampRepresentation = 'TimestampSeconds',
+) -> spec.Timestamp:
+    return create_timestamp(seconds=None, representation=representation)
+
+
 def create_timestamp(
     seconds: typing.SupportsFloat = None,
     representation: spec.TimestampRepresentation = 'TimestampSeconds',
