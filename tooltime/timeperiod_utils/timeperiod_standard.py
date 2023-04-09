@@ -8,6 +8,9 @@ from .. import spec
 from .. import timelength_utils
 from .. import timestamp_utils
 
+if typing.TYPE_CHECKING:
+    import polars as pl
+
 
 def get_standard_timeperiod(
     timelength_label: spec.TimelengthLabel | None = None,
@@ -190,3 +193,85 @@ def get_standard_intervals(
     timestamps = [int(interval.timestamp()) for interval in intervals]
 
     return timestamps
+
+
+def get_interval_df(
+    interval_size: spec.Timelength,
+    start_time: typing.Optional[spec.Timestamp] = None,
+    end_time: typing.Optional[spec.Timestamp] = None,
+    n_intervals: typing.Optional[int] = None,
+    window_size: typing.Optional[spec.Timelength] = None,
+) -> pl.DataFrame:
+
+    import polars as pl
+
+    # create standard timestamps
+    timestamps = get_standard_intervals(
+        interval_size=interval_size,
+        start_time=start_time,
+        end_time=end_time,
+        n_intervals=n_intervals,
+        window_size=window_size,
+    )
+    start_timestamps = [time for time in timestamps[:-1]]
+    end_timestamps = [time - 1 for time in timestamps[1:]]
+
+    # create labels
+    if interval_size == "1M":
+        labels = [
+            timestamp_utils.timestamp_to_iso_pretty(timestamp)[:7]
+            for timestamp in start_timestamps
+        ]
+    elif interval_size == "1d":
+        labels = [
+            timestamp_utils.timestamp_to_iso_pretty(timestamp)[:10]
+            for timestamp in start_timestamps
+        ]
+    elif interval_size == "1y":
+        labels = [
+            timestamp_utils.timestamp_to_iso_pretty(timestamp)[:4]
+            for timestamp in start_timestamps
+        ]
+    else:
+        labels = [
+            timestamp_utils.timestamp_to_iso_pretty(timestamp)
+            for timestamp in start_timestamps
+        ]
+
+    # create dataframe
+    df = pl.DataFrame(
+        {
+            "label": labels,
+            "start_timestamp": start_timestamps,
+            "end_timestamp": end_timestamps,
+        }
+    )
+
+    # compute middle timestamp
+    df = df.with_columns(
+        ((pl.col("end_timestamp") + pl.col("start_timestamp")) / 2)
+        .round(0)
+        .cast(pl.Int64)
+        .alias("middle_timestamp"),
+    )
+
+    # create iso_pretty timestamps
+    df = df.with_columns(
+        pl.col("start_timestamp")
+        .apply(timestamp_utils.timestamp_to_iso_pretty)
+        .alias("start_iso"),
+        pl.col("end_timestamp")
+        .apply(timestamp_utils.timestamp_to_iso_pretty)
+        .alias("end_iso"),
+        pl.col("middle_timestamp")
+        .apply(timestamp_utils.timestamp_to_iso_pretty)
+        .alias("middle_iso"),
+    )
+
+    # compute duration
+    df = df.with_columns(
+        (pl.col("end_timestamp") - pl.col("start_timestamp") + 1).alias("duration"),
+    )
+
+    return df
+
