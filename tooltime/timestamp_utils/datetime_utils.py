@@ -56,6 +56,7 @@ def get_unit_lowest_value(datetime_unit: spec.DatetimeUnit) -> int:
         'minute': 0,
         'second': 0,
         'microsecond': 0,
+        'year': 0,
     }
     return lowest_values[datetime_unit]
 

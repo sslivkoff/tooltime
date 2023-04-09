@@ -51,6 +51,10 @@ def get_standard_timeperiod(
         if block_size is None:
             block_size = 1
     elif (timelength_label is not None) and (block_unit is None):
+        if timelength_label.endswith('w'):
+            number = int(timelength_label[:-1])
+            timelength_label = str(7 * number) + 'd'
+
         block_size = int(timelength_label[:-1])
         unit_letters_to_names = (
             timelength_utils.datetime_unit_letters_to_names()
@@ -86,6 +90,9 @@ def get_standard_timeperiod(
         to_month = to_month_raw % 12
         to_year = from_datetime.year + math.floor(to_month_raw / 12)
         to_datetime = from_datetime.replace(month=to_month, year=to_year)
+    elif block_unit == 'year':
+        to_year = from_datetime.year + block_size
+        to_datetime = from_datetime.replace(year=to_year)
     else:
         block_timedelta = datetime.timedelta(**{(block_unit + 's'): block_size})
         to_datetime = from_datetime + block_timedelta

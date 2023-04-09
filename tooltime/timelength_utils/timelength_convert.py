@@ -554,6 +554,9 @@ def timelength_timedelta_to_seconds(
 def timelength_to_pandas_timelength(
     timelength: spec.Timelength,
 ) -> spec.TimelengthPandas:
+    if timelength.endswith('w'):
+        number = int(timelength[:-1])
+        timelength = str(7 * number) + 'd'
     timelength_label = timelength_to_label(timelength)
     number = timelength_label[:-1]
     unit_name = timelength_units.unit_letters_to_names()[timelength_label[-1]]
