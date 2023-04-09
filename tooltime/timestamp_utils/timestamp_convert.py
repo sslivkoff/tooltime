@@ -218,7 +218,7 @@ def convert_timestamp(
 
 def timestamp_to_seconds(
     timestamp: spec.Timestamp,
-    from_representation: spec.TimestampRepresentation = None,
+    from_representation: spec.TimestampRepresentation | None = None,
 ) -> spec.TimestampSeconds:
     """convert timestamp to TimestampSeconds
 
@@ -238,7 +238,7 @@ def timestamp_to_seconds(
 
 def timestamp_to_seconds_precise(
     timestamp: spec.Timestamp,
-    from_representation: spec.TimestampRepresentation = None,
+    from_representation: spec.TimestampRepresentation | None = None,
 ) -> spec.TimestampSecondsPrecise:
     """convert timestamp to TimestampSecondsPrecise
 
@@ -258,7 +258,7 @@ def timestamp_to_seconds_precise(
 
 def timestamp_to_label(
     timestamp: spec.Timestamp,
-    from_representation: spec.TimestampRepresentation = None,
+    from_representation: spec.TimestampRepresentation | None = None,
 ) -> spec.TimestampLabel:
     """convert timestamp to TimestampLabel
 
@@ -278,7 +278,7 @@ def timestamp_to_label(
 
 def timestamp_to_iso(
     timestamp: spec.Timestamp,
-    from_representation: spec.TimestampRepresentation = None,
+    from_representation: spec.TimestampRepresentation | None = None,
 ) -> spec.TimestampISO:
     """convert timestamp to TimestampISO
 
@@ -298,7 +298,7 @@ def timestamp_to_iso(
 
 def timestamp_to_iso_pretty(
     timestamp: spec.Timestamp,
-    from_representation: spec.TimestampRepresentation = None,
+    from_representation: spec.TimestampRepresentation | None = None,
 ) -> spec.TimestampISOPretty:
     """convert timestamp to TimestampISOPretty
 
@@ -318,7 +318,7 @@ def timestamp_to_iso_pretty(
 
 def timestamp_to_date(
     timestamp: spec.Timestamp,
-    from_representation: spec.TimestampRepresentation = None,
+    from_representation: spec.TimestampRepresentation | None = None,
 ) -> spec.TimestampDate:
     """convert timestamp to TimestampDate
 
@@ -338,7 +338,7 @@ def timestamp_to_date(
 
 def timestamp_to_year(
     timestamp: spec.Timestamp,
-    from_representation: spec.TimestampRepresentation = None,
+    from_representation: spec.TimestampRepresentation | None = None,
 ) -> spec.TimestampYear:
     """convert timestamp to TimestampYear
 
@@ -358,7 +358,7 @@ def timestamp_to_year(
 
 def timestamp_to_datetime(
     timestamp: spec.Timestamp,
-    from_representation: spec.TimestampRepresentation = None,
+    from_representation: spec.TimestampRepresentation | None = None,
 ) -> spec.TimestampDatetime:
     """convert timestamp to TimestampDatetime
 
@@ -378,7 +378,7 @@ def timestamp_to_datetime(
 
 def timestamp_to_date_compact(
     timestamp: spec.Timestamp,
-    from_representation: spec.TimestampRepresentation = None,
+    from_representation: spec.TimestampRepresentation | None = None,
 ) -> spec.TimestampDateCompact:
     return convert_timestamp(
         timestamp,
@@ -389,7 +389,7 @@ def timestamp_to_date_compact(
 
 def timestamp_to_month(
     timestamp: spec.Timestamp,
-    from_representation: spec.TimestampRepresentation = None,
+    from_representation: spec.TimestampRepresentation | None = None,
 ) -> spec.TimestampMonth:
     return convert_timestamp(
         timestamp,
@@ -400,7 +400,7 @@ def timestamp_to_month(
 
 def timestamp_to_month_compact(
     timestamp: spec.Timestamp,
-    from_representation: spec.TimestampRepresentation = None,
+    from_representation: spec.TimestampRepresentation | None = None,
 ) -> spec.TimestampMonthCompact:
     return convert_timestamp(
         timestamp,
@@ -411,7 +411,7 @@ def timestamp_to_month_compact(
 
 def timestamp_to_seconds_string(
     timestamp: spec.Timestamp,
-    from_representation: spec.TimestampRepresentation = None,
+    from_representation: spec.TimestampRepresentation | None = None,
 ) -> spec.TimestampSecondsString:
     return convert_timestamp(
         timestamp,

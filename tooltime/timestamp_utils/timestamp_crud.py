@@ -14,7 +14,7 @@ def now(
 
 
 def create_timestamp(
-    seconds: typing.SupportsFloat = None,
+    seconds: typing.SupportsFloat | None = None,
     representation: spec.TimestampRepresentation = 'TimestampSeconds',
 ) -> spec.Timestamp:
     """create Timestamp
@@ -41,7 +41,7 @@ def create_timestamp(
 
 
 def create_timestamp_seconds(
-    seconds: typing.SupportsFloat = None,
+    seconds: typing.SupportsFloat | None = None,
 ) -> spec.TimestampSeconds:
     """create Timestamp with representation TimestampSeconds"""
     if seconds is None:
@@ -50,7 +50,7 @@ def create_timestamp_seconds(
 
 
 def create_timestamp_seconds_precise(
-    seconds: typing.SupportsFloat = None,
+    seconds: typing.SupportsFloat | None = None,
 ) -> spec.TimestampSecondsPrecise:
     """create Timestamp with representation TimestampSecondsPrecise"""
     if seconds is None:
@@ -59,7 +59,7 @@ def create_timestamp_seconds_precise(
 
 
 def create_timestamp_label(
-    seconds: typing.SupportsFloat = None,
+    seconds: typing.SupportsFloat | None = None,
 ) -> spec.TimestampLabel:
     """create Timestamp with representation TimestampLabel"""
     if seconds is None:
@@ -68,7 +68,7 @@ def create_timestamp_label(
 
 
 def create_timestamp_iso(
-    seconds: typing.SupportsFloat = None,
+    seconds: typing.SupportsFloat | None = None,
 ) -> spec.TimestampISO:
     """create Timestamp with representation TimestampISO"""
     if seconds is None:
@@ -77,14 +77,14 @@ def create_timestamp_iso(
 
 
 def create_timestamp_iso_pretty(
-    seconds: typing.SupportsFloat = None,
+    seconds: typing.SupportsFloat | None = None,
 ) -> spec.TimestampISOPretty:
     """create Timestamp with representation TimestampISOPretty"""
     return create_timestamp_iso(seconds).replace('T', ' ')
 
 
 def create_timestamp_date(
-    seconds: typing.SupportsFloat = None,
+    seconds: typing.SupportsFloat | None = None,
 ) -> spec.TimestampDate:
     """create Timestamp with representation TimestampDate
 
@@ -106,7 +106,7 @@ def create_timestamp_date(
 
 
 def create_timestamp_year(
-    seconds: typing.SupportsFloat = None,
+    seconds: typing.SupportsFloat | None = None,
 ) -> spec.TimestampYear:
     """create Timestamp with representation TimestampDate
 
@@ -125,7 +125,7 @@ def create_timestamp_year(
 
 
 def create_timestamp_datetime(
-    seconds: typing.SupportsFloat = None,
+    seconds: typing.SupportsFloat | None = None,
 ) -> spec.TimestampDatetime:
     """create Timestamp with representation TimestampDatetime"""
     if seconds is None:

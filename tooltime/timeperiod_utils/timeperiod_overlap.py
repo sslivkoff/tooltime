@@ -49,14 +49,14 @@ def create_superset_timeperiod(
 
 def create_overlapping_timeperiod(
     timeperiod: spec.Timeperiod,
-    trim_start_relative: typing.SupportsFloat = None,
-    trim_end_relative: typing.SupportsFloat = None,
-    trim_start_absolute: spec.Timelength = None,
-    trim_end_absolute: spec.Timelength = None,
-    extend_start_relative: typing.SupportsFloat = None,
-    extend_end_relative: typing.SupportsFloat = None,
-    extend_start_absolute: spec.Timelength = None,
-    extend_end_absolute: spec.Timelength = None,
+    trim_start_relative: typing.SupportsFloat | None = None,
+    trim_end_relative: typing.SupportsFloat | None = None,
+    trim_start_absolute: spec.Timelength | None = None,
+    trim_end_absolute: spec.Timelength | None = None,
+    extend_start_relative: typing.SupportsFloat | None = None,
+    extend_end_relative: typing.SupportsFloat | None = None,
+    extend_start_absolute: spec.Timelength | None = None,
+    extend_end_absolute: spec.Timelength | None = None,
 ) -> spec.Timeperiod:
     """create copy of timeperiod with start or end trimmed or extended
 

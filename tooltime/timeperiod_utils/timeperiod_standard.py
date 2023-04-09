@@ -10,7 +10,7 @@ from .. import timestamp_utils
 
 
 def get_standard_timeperiod(
-    timelength_label: spec.TimelengthLabel = None,
+    timelength_label: spec.TimelengthLabel | None = None,
     *,
     block_unit: typing.Optional[spec.DatetimeUnit] = None,
     block_size: typing.Optional[int] = None,
@@ -182,7 +182,7 @@ def get_standard_intervals(
         date_range_kwargs['end'] = timeperiod['end'] * 1000000000
 
     # create intervals
-    import pandas as pd
+    import pandas as pd  # type: ignore
 
     intervals = pd.date_range(**date_range_kwargs)
 

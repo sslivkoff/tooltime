@@ -75,10 +75,10 @@ def summarize_timestamps(
 
 def print_timestamp_summary(
     *,
-    timestamps: typing.List[spec.Timestamp] = None,
-    summary: typing.Optional[spec.TimestampSummary] = None,
-    indent: typing.Optional[str] = None,
-    print_kwargs: dict[str, typing.Any] = None
+    timestamps: typing.List[spec.Timestamp] | None = None,
+    summary: spec.TimestampSummary | None = None,
+    indent: str | None = None,
+    print_kwargs: typing.Mapping[str, typing.Any] | None = None
 ) -> None:
     """print summary of timestamps
 

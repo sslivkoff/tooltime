@@ -27,7 +27,7 @@ def convert_timeperiod(
 def convert_timeperiod(
     timeperiod: spec.Timeperiod,
     to_representation: spec.TimeperiodRepresentation,
-    from_representation: typing.Optional[spec.TimeperiodRepresentation] = None,
+    from_representation: spec.TimeperiodRepresentation | None = None,
 ) -> spec.Timeperiod:
     """convert Timeperiod to a new representation
 
@@ -67,7 +67,7 @@ def convert_timeperiod(
 
 def timeperiod_to_pair(
     timeperiod: spec.Timeperiod,
-    from_representation: spec.TimeperiodRepresentation = None,
+    from_representation: spec.TimeperiodRepresentation | None = None,
 ) -> spec.TimeperiodPair:
     """convert Timeperiod to TimeperiodPair
 
@@ -94,7 +94,7 @@ def timeperiod_to_pair(
 
 def timeperiod_to_map(
     timeperiod: spec.Timeperiod,
-    from_representation: spec.TimeperiodRepresentation = None,
+    from_representation: spec.TimeperiodRepresentation | None = None,
 ) -> spec.TimeperiodMap:
     """convert Timeperiod to TimeperiodMap
 

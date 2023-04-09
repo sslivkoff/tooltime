@@ -10,10 +10,10 @@ from . import timeperiod_identify
 
 
 def create_timeperiod(
-    start: spec.Timestamp = None,
-    end: spec.Timestamp = None,
-    length: spec.Timelength = None,
-    to_representation: spec.TimeperiodRepresentation = None,
+    start: spec.Timestamp | None = None,
+    end: spec.Timestamp | None = None,
+    length: spec.Timelength | None = None,
+    to_representation: spec.TimeperiodRepresentation | None = None,
 ) -> spec.Timeperiod:
     """create Timeperiod
 
@@ -41,9 +41,9 @@ def create_timeperiod(
 
 
 def create_timeperiod_pair(
-    start: spec.Timestamp = None,
-    end: spec.Timestamp = None,
-    length: spec.Timelength = None,
+    start: spec.Timestamp | None = None,
+    end: spec.Timestamp | None = None,
+    length: spec.Timelength | None = None,
 ) -> spec.TimeperiodPair:
     """create Timeperiod with representation TimeperiodPair
 
@@ -60,9 +60,9 @@ def create_timeperiod_pair(
 
 
 def create_timeperiod_map(
-    start: spec.Timestamp = None,
-    end: spec.Timestamp = None,
-    length: spec.Timelength = None,
+    start: spec.Timestamp | None = None,
+    end: spec.Timestamp | None = None,
+    length: spec.Timelength | None = None,
 ) -> spec.TimeperiodMap:
     """create Timeperiod with representation TimeperiodMap
 
@@ -79,9 +79,9 @@ def create_timeperiod_map(
 
 
 def compute_start_end(
-    start: spec.Timestamp = None,
-    end: spec.Timestamp = None,
-    length: spec.Timelength = None,
+    start: spec.Timestamp | None = None,
+    end: spec.Timestamp | None = None,
+    length: spec.Timelength | None = None,
 ) -> tuple[typing.Union[int, float], typing.Union[int, float]]:
     """return start and end given two of start, end, and length
 

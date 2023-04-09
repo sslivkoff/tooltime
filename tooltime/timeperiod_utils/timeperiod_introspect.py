@@ -10,7 +10,7 @@ from . import timeperiod_convert
 def print_timeperiod(
     timeperiod: spec.Timeperiod,
     timestamp_representation: spec.TimestampRepresentation = 'TimestampLabel',
-    print_kwargs: dict[str, typing.Any] = None,
+    print_kwargs: typing.Mapping[str, typing.Any] | None = None,
 ) -> None:
     """print Timeperiod
 

@@ -44,7 +44,7 @@ def get_age(
 
 def get_age(
     timestamp: spec.Timestamp,
-    to_representation: spec.TimelengthRepresentation = None,
+    to_representation: spec.TimelengthRepresentation | None = None,
     *,
     precise: bool = False,
 ) -> spec.Timelength:
@@ -61,7 +61,7 @@ def get_age(
 
 def create_timelength(
     seconds: spec.TimelengthSecondsRaw,
-    to_representation: spec.TimelengthRepresentation = None,
+    to_representation: spec.TimelengthRepresentation | None = None,
 ) -> spec.Timelength:
     """create Timelength
 
