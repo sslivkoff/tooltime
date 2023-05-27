@@ -90,8 +90,12 @@ def get_standard_timeperiod(
     if block_unit == 'month':
         # datetime.timedelta does not support months
         to_month_raw = from_datetime.month + block_size
-        to_month = to_month_raw % 12
-        to_year = from_datetime.year + math.floor(to_month_raw / 12)
+
+        to_month = to_month_raw
+        to_year = from_datetime.year
+        while to_month > 12:
+            to_month -= 12
+            to_year += 1
         to_datetime = from_datetime.replace(month=to_month, year=to_year)
     elif block_unit == 'year':
         to_year = from_datetime.year + block_size
