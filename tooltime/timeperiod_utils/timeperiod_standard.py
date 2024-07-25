@@ -262,13 +262,13 @@ def get_interval_df(
     # create iso_pretty timestamps
     df = df.with_columns(
         pl.col("start_timestamp")
-        .map_elements(timestamp_utils.timestamp_to_iso_pretty, return_dtype=str)
+        .map_elements(timestamp_utils.timestamp_to_iso_pretty, return_dtype=pl.String)
         .alias("start_iso"),
         pl.col("end_timestamp")
-        .map_elements(timestamp_utils.timestamp_to_iso_pretty, return_dtype=str)
+        .map_elements(timestamp_utils.timestamp_to_iso_pretty, return_dtype=pl.String)
         .alias("end_iso"),
         pl.col("middle_timestamp")
-        .map_elements(timestamp_utils.timestamp_to_iso_pretty, return_dtype=str)
+        .map_elements(timestamp_utils.timestamp_to_iso_pretty, return_dtype=pl.String)
         .alias("middle_iso"),
     )
 
