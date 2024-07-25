@@ -53,10 +53,11 @@ def test_get_standard_timeperiod(test_tuple):
     dt = tooltime.floor_datetime(dt, block_unit)
     dt = dt.replace(**{block_unit: dt_value})
     timeperiod = tooltime.get_standard_timeperiod(
-        timestamp=dt.timestamp(), block_unit=block_unit, block_size=block_size,
+        timestamp=dt.timestamp(),
+        block_unit=block_unit,
+        block_size=block_size,
     )
     from_dt = tooltime.timestamp_to_datetime(timeperiod['start'])
     to_dt = tooltime.timestamp_to_datetime(timeperiod['end'])
     assert getattr(from_dt, block_unit) == block_start
     assert getattr(to_dt, block_unit) == block_end
-

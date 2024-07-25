@@ -137,4 +137,3 @@ def is_timelength_timedelta(
 ) -> TypeGuard[spec.TimelengthTimedelta]:
     """return bool of whether input is TimelengthTimedelta"""
     return isinstance(timelength, datetime.timedelta)
-

@@ -13,4 +13,3 @@ def test_detect_timestamp_type(example):
     actual_representation, value = example
     detected_representation = tooltime.detect_timestamp_representation(value)
     assert actual_representation == detected_representation
-

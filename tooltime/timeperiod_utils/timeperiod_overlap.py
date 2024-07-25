@@ -114,4 +114,3 @@ def create_overlapping_timeperiod(
         new_end = new_end + extend_end_seconds
 
     return (new_start, new_end)
-

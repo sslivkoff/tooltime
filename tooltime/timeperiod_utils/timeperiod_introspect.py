@@ -33,4 +33,3 @@ def print_timeperiod(
     if print_kwargs is None:
         print_kwargs = {}
     print('[' + str(start_label) + ', ' + str(end_label) + ']', **print_kwargs)
-

@@ -143,7 +143,7 @@ def get_standard_intervals(
         and n_intervals is not None
     ):
         raise Exception(
-            'cannot specify {start_time, end_time, n_intervals} because that won\'t be standardized'
+            "cannot specify {start_time, end_time, n_intervals} because that won't be standardized"
         )
 
     # use current time as default
@@ -154,9 +154,9 @@ def get_standard_intervals(
 
     # parse interval_size
     if interval_size is not None:
-        date_range_kwargs[
-            'freq'
-        ] = timelength_utils.timelength_to_pandas_timelength(interval_size)
+        date_range_kwargs['freq'] = (
+            timelength_utils.timelength_to_pandas_timelength(interval_size)
+        )
 
     # parse n_intervals
     if window_size is not None:
@@ -206,7 +206,6 @@ def get_interval_df(
     n_intervals: typing.Optional[int] = None,
     window_size: typing.Optional[spec.Timelength] = None,
 ) -> pl.DataFrame:
-
     import polars as pl
 
     # create standard timestamps
@@ -221,17 +220,17 @@ def get_interval_df(
     end_timestamps = [time - 1 for time in timestamps[1:]]
 
     # create labels
-    if interval_size == "1M":
+    if interval_size == '1M':
         labels = [
             timestamp_utils.timestamp_to_iso_pretty(timestamp)[:7]
             for timestamp in start_timestamps
         ]
-    elif interval_size == "1d":
+    elif interval_size == '1d':
         labels = [
             timestamp_utils.timestamp_to_iso_pretty(timestamp)[:10]
             for timestamp in start_timestamps
         ]
-    elif interval_size == "1y":
+    elif interval_size == '1y':
         labels = [
             timestamp_utils.timestamp_to_iso_pretty(timestamp)[:4]
             for timestamp in start_timestamps
@@ -245,37 +244,44 @@ def get_interval_df(
     # create dataframe
     df = pl.DataFrame(
         {
-            "label": labels,
-            "start_timestamp": start_timestamps,
-            "end_timestamp": end_timestamps,
+            'label': labels,
+            'start_timestamp': start_timestamps,
+            'end_timestamp': end_timestamps,
         }
     )
 
     # compute middle timestamp
     df = df.with_columns(
-        ((pl.col("end_timestamp") + pl.col("start_timestamp")) / 2)
+        ((pl.col('end_timestamp') + pl.col('start_timestamp')) / 2)
         .round(0)
         .cast(pl.Int64)
-        .alias("middle_timestamp"),
+        .alias('middle_timestamp'),
     )
 
     # create iso_pretty timestamps
     df = df.with_columns(
-        pl.col("start_timestamp")
-        .map_elements(timestamp_utils.timestamp_to_iso_pretty, return_dtype=pl.String)
-        .alias("start_iso"),
-        pl.col("end_timestamp")
-        .map_elements(timestamp_utils.timestamp_to_iso_pretty, return_dtype=pl.String)
-        .alias("end_iso"),
-        pl.col("middle_timestamp")
-        .map_elements(timestamp_utils.timestamp_to_iso_pretty, return_dtype=pl.String)
-        .alias("middle_iso"),
+        pl.col('start_timestamp')
+        .map_elements(
+            timestamp_utils.timestamp_to_iso_pretty, return_dtype=pl.String
+        )
+        .alias('start_iso'),
+        pl.col('end_timestamp')
+        .map_elements(
+            timestamp_utils.timestamp_to_iso_pretty, return_dtype=pl.String
+        )
+        .alias('end_iso'),
+        pl.col('middle_timestamp')
+        .map_elements(
+            timestamp_utils.timestamp_to_iso_pretty, return_dtype=pl.String
+        )
+        .alias('middle_iso'),
     )
 
     # compute duration
     df = df.with_columns(
-        (pl.col("end_timestamp") - pl.col("start_timestamp") + 1).alias("duration"),
+        (pl.col('end_timestamp') - pl.col('start_timestamp') + 1).alias(
+            'duration'
+        ),
     )
 
     return df
-

@@ -4,7 +4,8 @@ import tooltime.spec
 
 
 @pytest.mark.parametrize(
-    'timelength_conversions', tooltime.spec.equivalent_sets['Timelength'],
+    'timelength_conversions',
+    tooltime.spec.equivalent_sets['Timelength'],
 )
 def test_convert_timelengths(timelength_conversions):
     for from_representation, from_timelength in timelength_conversions.items():
@@ -15,4 +16,3 @@ def test_convert_timelengths(timelength_conversions):
                 to_representation=to_representation,
             )
             assert converted_timelength == to_timelength
-

@@ -4,7 +4,8 @@ import tooltime.spec
 
 
 @pytest.mark.parametrize(
-    'timestamp_conversions', tooltime.spec.equivalent_sets['Timestamp'],
+    'timestamp_conversions',
+    tooltime.spec.equivalent_sets['Timestamp'],
 )
 def test_convert_timestamps(timestamp_conversions):
     for from_representation, from_timestamp in timestamp_conversions.items():
@@ -20,4 +21,3 @@ def test_convert_timestamps(timestamp_conversions):
                 )
             else:
                 assert converted_timestamp == to_timestamp
-

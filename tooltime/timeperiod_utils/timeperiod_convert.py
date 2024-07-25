@@ -11,8 +11,7 @@ def convert_timeperiod(
     timeperiod: spec.Timeperiod,
     to_representation: typing.Literal['TimeperiodPair'],
     from_representation: typing.Optional[spec.TimeperiodRepresentation],
-) -> spec.TimeperiodPair:
-    ...
+) -> spec.TimeperiodPair: ...
 
 
 @typing.overload
@@ -20,8 +19,7 @@ def convert_timeperiod(
     timeperiod: spec.Timeperiod,
     to_representation: typing.Literal['TimeperiodMap'],
     from_representation: typing.Optional[spec.TimeperiodRepresentation],
-) -> spec.TimeperiodMap:
-    ...
+) -> spec.TimeperiodMap: ...
 
 
 def convert_timeperiod(
@@ -118,4 +116,3 @@ def timeperiod_to_map(
         raise Exception(
             'unknown Timeperiod representation: ' + str(from_representation)
         )
-

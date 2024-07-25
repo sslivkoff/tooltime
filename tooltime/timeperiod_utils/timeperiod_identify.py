@@ -57,4 +57,3 @@ def is_timeperiod_pair(
         and timestamp_utils.is_timestamp(timeperiod[0])
         and timestamp_utils.is_timestamp(timeperiod[1])
     )
-

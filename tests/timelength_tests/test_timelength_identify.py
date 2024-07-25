@@ -20,4 +20,3 @@ def test_get_timelength_representation(example):
         ]
     else:
         assert actual_representation == detected_representation
-

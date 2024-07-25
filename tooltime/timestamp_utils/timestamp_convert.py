@@ -21,8 +21,7 @@ def convert_timestamp(
     timestamp: spec.Timestamp,
     to_representation: typing.Literal['TimestampSeconds'],
     from_representation: typing.Optional[spec.TimestampRepresentation] = None,
-) -> spec.TimestampSeconds:
-    ...
+) -> spec.TimestampSeconds: ...
 
 
 @typing.overload
@@ -30,8 +29,7 @@ def convert_timestamp(
     timestamp: spec.Timestamp,
     to_representation: typing.Literal['TimestampSecondsPrecise'],
     from_representation: typing.Optional[spec.TimestampRepresentation] = None,
-) -> spec.TimestampSecondsPrecise:
-    ...
+) -> spec.TimestampSecondsPrecise: ...
 
 
 @typing.overload
@@ -39,8 +37,7 @@ def convert_timestamp(
     timestamp: spec.Timestamp,
     to_representation: typing.Literal['TimestampLabel'],
     from_representation: typing.Optional[spec.TimestampRepresentation] = None,
-) -> spec.TimestampLabel:
-    ...
+) -> spec.TimestampLabel: ...
 
 
 @typing.overload
@@ -48,8 +45,7 @@ def convert_timestamp(
     timestamp: spec.Timestamp,
     to_representation: typing.Literal['TimestampISO'],
     from_representation: typing.Optional[spec.TimestampRepresentation] = None,
-) -> spec.TimestampISO:
-    ...
+) -> spec.TimestampISO: ...
 
 
 @typing.overload
@@ -57,8 +53,7 @@ def convert_timestamp(
     timestamp: spec.Timestamp,
     to_representation: typing.Literal['TimestampISOPretty'],
     from_representation: typing.Optional[spec.TimestampRepresentation] = None,
-) -> spec.TimestampISOPretty:
-    ...
+) -> spec.TimestampISOPretty: ...
 
 
 @typing.overload
@@ -66,8 +61,7 @@ def convert_timestamp(
     timestamp: spec.Timestamp,
     to_representation: typing.Literal['TimestampDate'],
     from_representation: typing.Optional[spec.TimestampRepresentation] = None,
-) -> spec.TimestampDate:
-    ...
+) -> spec.TimestampDate: ...
 
 
 @typing.overload
@@ -75,8 +69,7 @@ def convert_timestamp(
     timestamp: spec.Timestamp,
     to_representation: typing.Literal['TimestampYear'],
     from_representation: typing.Optional[spec.TimestampRepresentation] = None,
-) -> spec.TimestampYear:
-    ...
+) -> spec.TimestampYear: ...
 
 
 @typing.overload
@@ -84,8 +77,7 @@ def convert_timestamp(
     timestamp: spec.Timestamp,
     to_representation: typing.Literal['TimestampDatetime'],
     from_representation: typing.Optional[spec.TimestampRepresentation] = None,
-) -> spec.TimestampDatetime:
-    ...
+) -> spec.TimestampDatetime: ...
 
 
 @typing.overload
@@ -93,8 +85,7 @@ def convert_timestamp(
     timestamp: spec.Timestamp,
     to_representation: typing.Literal['TimestampDateCompact'],
     from_representation: typing.Optional[spec.TimestampRepresentation] = None,
-) -> spec.TimestampDateCompact:
-    ...
+) -> spec.TimestampDateCompact: ...
 
 
 @typing.overload
@@ -102,8 +93,7 @@ def convert_timestamp(
     timestamp: spec.Timestamp,
     to_representation: typing.Literal['TimestampMonth'],
     from_representation: typing.Optional[spec.TimestampRepresentation] = None,
-) -> spec.TimestampMonth:
-    ...
+) -> spec.TimestampMonth: ...
 
 
 @typing.overload
@@ -111,8 +101,7 @@ def convert_timestamp(
     timestamp: spec.Timestamp,
     to_representation: typing.Literal['TimestampMonthCompact'],
     from_representation: typing.Optional[spec.TimestampRepresentation] = None,
-) -> spec.TimestampMonthCompact:
-    ...
+) -> spec.TimestampMonthCompact: ...
 
 
 @typing.overload
@@ -120,8 +109,7 @@ def convert_timestamp(
     timestamp: spec.Timestamp,
     to_representation: typing.Literal['TimestampSecondsString'],
     from_representation: typing.Optional[spec.TimestampRepresentation] = None,
-) -> spec.TimestampSecondsString:
-    ...
+) -> spec.TimestampSecondsString: ...
 
 
 def convert_timestamp(
@@ -419,6 +407,7 @@ def timestamp_to_seconds_string(
         from_representation=from_representation,
     )
 
+
 #
 # # specific conversion functions, from seconds
 #
@@ -442,7 +431,7 @@ def timestamp_seconds_to_iso(
     dt = datetime.datetime.fromtimestamp(
         float(timestamp_seconds), datetime.timezone.utc
     )
-    iso_format = "%Y-%m-%dT%H:%M:%SZ"
+    iso_format = '%Y-%m-%dT%H:%M:%SZ'
     iso = dt.strftime(iso_format)
     return iso
 
@@ -502,9 +491,12 @@ def timestamp_seconds_to_seconds_string(
     timestamp_seconds: spec.TimestampSecondsRaw,
 ) -> spec.TimestampSecondsString:
     try:
-        return str(int(timestamp_seconds))   # type: ignore
+        return str(int(timestamp_seconds))  # type: ignore
     except ValueError:
-        raise Exception('cannot be converted to TimestampSecondsString: ' + str(timestamp_seconds))
+        raise Exception(
+            'cannot be converted to TimestampSecondsString: '
+            + str(timestamp_seconds)
+        )
 
 
 #
@@ -540,9 +532,9 @@ def timestamp_iso_to_seconds(
     """convert TimestampISO to seconds"""
 
     if '.' in timestamp_iso:
-        iso_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+        iso_format = '%Y-%m-%dT%H:%M:%S.%fZ'
     else:
-        iso_format = "%Y-%m-%dT%H:%M:%SZ"
+        iso_format = '%Y-%m-%dT%H:%M:%SZ'
 
     local_dt = datetime.datetime.strptime(timestamp_iso, iso_format)
     utc_dt = local_dt.replace(tzinfo=datetime.timezone.utc)
@@ -562,7 +554,6 @@ def timestamp_iso_pretty_to_seconds(
 def timestamp_date_to_seconds(
     timestamp_date: spec.TimestampDate,
 ) -> spec.TimestampSecondsRaw:
-
     import datetime
 
     year, month, day = timestamp_date.split('-')
@@ -578,7 +569,6 @@ def timestamp_date_to_seconds(
 def timestamp_year_to_seconds(
     timestamp_date: spec.TimestampYear,
 ) -> spec.TimestampSecondsRaw:
-
     import datetime
 
     dt = datetime.datetime(
@@ -609,7 +599,6 @@ def timestamp_to_numerical(
 def timestamp_date_compact_to_seconds(
     timestamp_date_compact: spec.TimestampDateCompact,
 ) -> spec.TimestampSecondsRaw:
-
     import datetime
 
     year = timestamp_date_compact[:4]
@@ -627,7 +616,6 @@ def timestamp_date_compact_to_seconds(
 def timestamp_month_to_seconds(
     timestamp_month: spec.TimestampMonth,
 ) -> spec.TimestampSecondsRaw:
-
     import datetime
 
     year, month = timestamp_month.split('-')
@@ -643,7 +631,6 @@ def timestamp_month_to_seconds(
 def timestamp_month_compact_to_seconds(
     timestamp_month_compact: spec.TimestampMonthCompact,
 ) -> spec.TimestampSecondsRaw:
-
     import datetime
 
     year = timestamp_month_compact[:4]

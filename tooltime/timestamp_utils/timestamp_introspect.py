@@ -78,7 +78,7 @@ def print_timestamp_summary(
     timestamps: typing.List[spec.Timestamp] | None = None,
     summary: spec.TimestampSummary | None = None,
     indent: str | None = None,
-    print_kwargs: typing.Mapping[str, typing.Any] | None = None
+    print_kwargs: typing.Mapping[str, typing.Any] | None = None,
 ) -> None:
     """print summary of timestamps
 
@@ -112,7 +112,6 @@ def print_timestamp_summary(
         print(indent + 'timestamp:', summary['start'], **print_kwargs)
 
     elif n_t > 1:
-
         n_unique = summary['n_unique']
         resolution = summary['resolution']
         start = summary['start']
@@ -132,19 +131,19 @@ def print_timestamp_summary(
             '    ' + indent + 'start:',
             start,
             '(' + ('%.14g' % summary['start']) + ')',
-            **print_kwargs
+            **print_kwargs,
         )
         print(
             '    ' + indent + 'end:  ',
             end,
             '(' + ('%.14g' % summary['end']) + ')',
-            **print_kwargs
+            **print_kwargs,
         )
         print(
             '    ' + indent + 'duration:',
             duration_label,
             '(' + ('%.14g' % duration) + ' s)',
-            **print_kwargs
+            **print_kwargs,
         )
         print(indent + 'resolution:', **print_kwargs)
         print(
@@ -155,24 +154,23 @@ def print_timestamp_summary(
             '    ' + indent + 'missing timestamps:',
             n_missing,
             '(if median_dt maintained)',
-            **print_kwargs
+            **print_kwargs,
         )
         print('    ' + indent + 'outlier_dts:', n_outliers, **print_kwargs)
         print(
             '        ' + indent + 'small:',
             n_small_outliers,
             '       dt < median_dt / (1 + outlier_rtol)',
-            **print_kwargs
+            **print_kwargs,
         )
         print(
             '        ' + indent + 'large:',
             n_large_outliers,
             '       dt > median_dt * (1 + outlier_rtol)',
-            **print_kwargs
+            **print_kwargs,
         )
         print(
             '        ' + indent + '(outlier_rtol =',
             str(outlier_rtol) + ')',
-            **print_kwargs
+            **print_kwargs,
         )
-

@@ -15,4 +15,3 @@ def test_get_timefrequency_representation(example):
         value
     )
     assert actual_representation == detected_representation
-

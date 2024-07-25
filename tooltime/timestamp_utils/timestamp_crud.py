@@ -221,7 +221,8 @@ def truncate_timestamp(
         raise Exception('invalid interval: ' + str(interval))
 
     if output_format is None:
-        output_format = timestamp_identify.detect_timestamp_representation(timestamp)
+        output_format = timestamp_identify.detect_timestamp_representation(
+            timestamp
+        )
 
     return timestamp_convert.convert_timestamp(dt_trunc, output_format)
-

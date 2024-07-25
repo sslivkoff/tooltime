@@ -48,7 +48,7 @@ def get_unit_labels() -> typing.Mapping[str, str]:
     """return mapping of singular and plural unit labels"""
     return dict(
         typing.cast(typing.Mapping[str, str], get_singular_unit_labels()),
-        **typing.cast(typing.Mapping[str, str], get_plural_unit_labels())
+        **typing.cast(typing.Mapping[str, str], get_plural_unit_labels()),
     )
 
 

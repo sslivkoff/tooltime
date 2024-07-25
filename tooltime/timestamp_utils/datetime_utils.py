@@ -61,4 +61,3 @@ def get_unit_lowest_value(datetime_unit: spec.DatetimeUnit) -> int:
         'year': 0,
     }
     return lowest_values[datetime_unit]
-

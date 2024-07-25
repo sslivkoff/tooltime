@@ -150,4 +150,3 @@ def compute_timeperiod_start_end(
     end_numerical = timestamp_utils.timestamp_to_numerical(end)
 
     return (start_numerical, end_numerical)
-

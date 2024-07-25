@@ -4,7 +4,8 @@ import tooltime.spec
 
 
 @pytest.mark.parametrize(
-    'timeperiod_conversions', tooltime.spec.equivalent_sets['Timeperiod'],
+    'timeperiod_conversions',
+    tooltime.spec.equivalent_sets['Timeperiod'],
 )
 def test_convert_timeperiods(timeperiod_conversions):
     for from_representation, from_timeperiod in timeperiod_conversions.items():
@@ -15,5 +16,3 @@ def test_convert_timeperiods(timeperiod_conversions):
                 to_representation=to_representation,
             )
             assert converted_timeperiod == to_timeperiod
-
-

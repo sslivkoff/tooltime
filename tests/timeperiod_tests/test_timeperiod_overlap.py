@@ -160,7 +160,6 @@ create_overlapping_tests = [
         },
         'result': (1600000000, 1600000010),
     },
-
     # trim
     {
         'kwargs': {
@@ -190,7 +189,6 @@ create_overlapping_tests = [
         },
         'result': (1600000000, 1600000008),
     },
-
     # extend
     {
         'kwargs': {
@@ -220,7 +218,6 @@ create_overlapping_tests = [
         },
         'result': (1600000000, 1600000012),
     },
-
 ]
 
 
@@ -229,4 +226,3 @@ def test_create_overlapping_timeperiod(create_overlapping_test):
     kwargs = create_overlapping_test['kwargs']
     result = tooltime.create_overlapping_timeperiod(**kwargs)
     assert result == create_overlapping_test['result']
-

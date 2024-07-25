@@ -24,3 +24,9 @@ Source = "https://github.com/sslivkoff/tooltime"
 
 [tool.mypy]
 files = ["tooltime"]
+
+[tool.ruff]
+line-length = 80
+
+[tool.ruff.format]
+quote-style = "single"

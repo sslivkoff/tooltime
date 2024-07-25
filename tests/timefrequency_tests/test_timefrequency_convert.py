@@ -31,4 +31,3 @@ def test_convert_timefrequencys(timefrequency_conversions):
                 )
 
             assert converted_timefrequency == to_timefrequency
-

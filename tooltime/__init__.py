@@ -1,4 +1,5 @@
 """tooltime makes it easy to create and convert representations of time"""
+
 from .exceptions import *
 from .spec import *
 from .timefrequency_utils import *

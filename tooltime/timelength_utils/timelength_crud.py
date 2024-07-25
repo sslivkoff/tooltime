@@ -18,8 +18,7 @@ def get_age(
     to_representation: Literal['TimelengthPhrase'],
     *,
     precise: bool = False,
-) -> spec.TimelengthPhrase:
-    ...
+) -> spec.TimelengthPhrase: ...
 
 
 @typing.overload
@@ -28,8 +27,7 @@ def get_age(
     to_representation: Literal['TimelengthSeconds'],
     *,
     precise: bool = False,
-) -> spec.TimelengthSeconds:
-    ...
+) -> spec.TimelengthSeconds: ...
 
 
 @typing.overload
@@ -38,8 +36,7 @@ def get_age(
     to_representation: Literal['TimelengthSecondsPrecise'],
     *,
     precise: bool = False,
-) -> spec.TimelengthSecondsPrecise:
-    ...
+) -> spec.TimelengthSecondsPrecise: ...
 
 
 def get_age(

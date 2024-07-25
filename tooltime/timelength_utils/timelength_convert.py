@@ -19,8 +19,7 @@ def convert_timelength(
     timelength: spec.Timelength,
     to_representation: typing.Literal['TimelengthSeconds'],
     from_representation: typing.Optional[spec.TimelengthRepresentation],
-) -> spec.TimelengthSeconds:
-    ...
+) -> spec.TimelengthSeconds: ...
 
 
 @typing.overload
@@ -28,8 +27,7 @@ def convert_timelength(
     timelength: spec.Timelength,
     to_representation: typing.Literal['TimelengthSecondsPrecise'],
     from_representation: typing.Optional[spec.TimelengthRepresentation],
-) -> spec.TimelengthSecondsPrecise:
-    ...
+) -> spec.TimelengthSecondsPrecise: ...
 
 
 @typing.overload
@@ -37,8 +35,7 @@ def convert_timelength(
     timelength: spec.Timelength,
     to_representation: typing.Literal['TimelengthLabel'],
     from_representation: typing.Optional[spec.TimelengthRepresentation],
-) -> spec.TimelengthLabel:
-    ...
+) -> spec.TimelengthLabel: ...
 
 
 @typing.overload
@@ -46,8 +43,7 @@ def convert_timelength(
     timelength: spec.Timelength,
     to_representation: typing.Literal['TimelengthClock'],
     from_representation: typing.Optional[spec.TimelengthRepresentation],
-) -> spec.TimelengthClock:
-    ...
+) -> spec.TimelengthClock: ...
 
 
 @typing.overload
@@ -55,8 +51,7 @@ def convert_timelength(
     timelength: spec.Timelength,
     to_representation: typing.Literal['TimelengthPhrase'],
     from_representation: typing.Optional[spec.TimelengthRepresentation],
-) -> spec.TimelengthPhrase:
-    ...
+) -> spec.TimelengthPhrase: ...
 
 
 @typing.overload
@@ -64,8 +59,7 @@ def convert_timelength(
     timelength: spec.Timelength,
     to_representation: typing.Literal['TimelengthClockPhrase'],
     from_representation: typing.Optional[spec.TimelengthRepresentation],
-) -> spec.TimelengthClockPhrase:
-    ...
+) -> spec.TimelengthClockPhrase: ...
 
 
 @typing.overload
@@ -73,8 +67,7 @@ def convert_timelength(
     timelength: spec.Timelength,
     to_representation: typing.Literal['TimelengthTimedelta'],
     from_representation: typing.Optional[spec.TimelengthRepresentation],
-) -> spec.TimelengthTimedelta:
-    ...
+) -> spec.TimelengthTimedelta: ...
 
 
 def convert_timelength(
@@ -328,14 +321,15 @@ def timelength_seconds_to_label(
     if base_unit is not None:
         if base_unit not in base_units:
             raise Exception('invalid base unit: ' + str(base_unit))
-        candidates: typing.Mapping[str, int] = {base_unit: base_units[base_unit]}
+        candidates: typing.Mapping[str, int] = {
+            base_unit: base_units[base_unit]
+        }
     else:
         candidates = base_units
 
     # attempt matches to candidate base units in descending order
     descending = sorted(candidates.items(), key=lambda item: -item[-1])
     for base_label, base_seconds in descending:
-
         # attempt match to base unit
         if base_only:
             if math.isclose(seconds, base_seconds):
