@@ -5,6 +5,10 @@ import typing
 
 from .. import spec
 from . import timestamp_convert
+from . import timestamp_identify
+
+if typing.TYPE_CHECKING:
+    import datetime
 
 
 def now(
@@ -131,3 +135,93 @@ def create_timestamp_datetime(
     if seconds is None:
         seconds = time.time()
     return timestamp_convert.timestamp_seconds_to_datetime(seconds)
+
+
+def floor_timestamp(
+    timestamp: spec.Timestamp,
+    interval: typing.Literal['day', 'week', 'month', 'year'],
+    output_format: spec.TimestampRepresentation | None = None,
+) -> spec.Timestamp:
+    return truncate_timestamp(
+        timestamp=timestamp,
+        interval=interval,
+        direction='floor',
+        output_format=output_format,
+    )
+
+
+def ceiling_timestamp(
+    timestamp: spec.Timestamp,
+    interval: typing.Literal['day', 'week', 'month', 'year'],
+    output_format: spec.TimestampRepresentation | None = None,
+) -> spec.Timestamp:
+    return truncate_timestamp(
+        timestamp=timestamp,
+        interval=interval,
+        direction='ceiling',
+        output_format=output_format,
+    )
+
+
+def truncate_timestamp(
+    timestamp: spec.Timestamp,
+    interval: typing.Literal['day', 'week', 'month', 'year'],
+    direction: typing.Literal['floor', 'ceiling'],
+    output_format: spec.TimestampRepresentation | None = None,
+) -> spec.Timestamp:
+    """truncate time floorward or ceilingward, getting the floor or ceiling"""
+    import datetime
+    import math
+
+    if direction not in ['floor', 'ceiling']:
+        raise Exception('direction must be floor or ceiling')
+
+    dt = timestamp_convert.timestamp_to_datetime(timestamp)
+    if interval == 'day':
+        dt_trunc: datetime.datetime = datetime.datetime(
+            year=dt.year,
+            month=dt.month,
+            day=dt.day,
+            tzinfo=datetime.timezone.utc,
+        )
+        if direction == 'floor' and dt > dt_trunc:
+            dt_trunc = dt_trunc + datetime.timedelta(days=1)
+    elif interval == 'week':
+        seconds = timestamp_convert.timestamp_to_seconds(dt)
+        sunday = math.floor((seconds + 4 * 86400) / 7 / 86400) * 86400 * 7
+        if seconds > sunday:
+            sunday = sunday + 7 * 86400
+        dt_trunc = timestamp_convert.timestamp_to_datetime(sunday)
+    elif interval == 'month':
+        dt_trunc = datetime.datetime(
+            year=dt.year, month=dt.month, day=1, tzinfo=datetime.timezone.utc
+        )
+        if direction == 'floor' and dt > dt_trunc:
+            if dt.month == 12:
+                new_year = dt.year + 1
+                new_month = 1
+            else:
+                new_year = dt.year
+                new_month = dt.month + 1
+            dt_trunc = datetime.datetime(
+                year=new_year,
+                month=new_month,
+                day=1,
+                tzinfo=datetime.timezone.utc,
+            )
+    elif interval == 'year':
+        dt_trunc = datetime.datetime(
+            year=dt.year, month=1, day=1, tzinfo=datetime.timezone.utc
+        )
+        if direction == 'floor' and dt > dt_trunc:
+            return datetime.datetime(
+                year=dt.year + 1, month=1, day=1, tzinfo=datetime.timezone.utc
+            )
+    else:
+        raise Exception('invalid interval: ' + str(interval))
+
+    if output_format is None:
+        output_format = timestamp_identify.detect_timestamp_representation(timestamp)
+
+    return timestamp_convert.convert_timestamp(dt_trunc, output_format)
+
