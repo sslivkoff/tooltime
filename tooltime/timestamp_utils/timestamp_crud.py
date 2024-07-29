@@ -189,7 +189,7 @@ def truncate_timestamp(
             math.floor((seconds + 4 * 86400) / 7 / 86400) * 86400 * 7
             - 4 * 86400
         )
-        if direction == 'ceiling':
+        if direction == 'ceiling' and seconds > sunday:
             sunday = sunday + 7 * 86400
         dt_trunc = timestamp_convert.timestamp_to_datetime(sunday)
     elif interval == 'month':
