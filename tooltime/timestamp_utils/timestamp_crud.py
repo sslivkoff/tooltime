@@ -181,7 +181,7 @@ def truncate_timestamp(
             day=dt.day,
             tzinfo=datetime.timezone.utc,
         )
-        if direction == 'floor' and dt > dt_trunc:
+        if direction == 'ceiling' and dt > dt_trunc:
             dt_trunc = dt_trunc + datetime.timedelta(days=1)
     elif interval == 'week':
         seconds = timestamp_convert.timestamp_to_seconds(dt)
@@ -196,7 +196,7 @@ def truncate_timestamp(
         dt_trunc = datetime.datetime(
             year=dt.year, month=dt.month, day=1, tzinfo=datetime.timezone.utc
         )
-        if direction == 'floor' and dt > dt_trunc:
+        if direction == 'ceiling' and dt > dt_trunc:
             if dt.month == 12:
                 new_year = dt.year + 1
                 new_month = 1
@@ -213,7 +213,7 @@ def truncate_timestamp(
         dt_trunc = datetime.datetime(
             year=dt.year, month=1, day=1, tzinfo=datetime.timezone.utc
         )
-        if direction == 'floor' and dt > dt_trunc:
+        if direction == 'ceiling' and dt > dt_trunc:
             return datetime.datetime(
                 year=dt.year + 1, month=1, day=1, tzinfo=datetime.timezone.utc
             )
