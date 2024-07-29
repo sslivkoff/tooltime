@@ -7,9 +7,6 @@ from .. import spec
 from . import timestamp_convert
 from . import timestamp_identify
 
-if typing.TYPE_CHECKING:
-    import datetime
-
 
 def now(
     representation: spec.TimestampRepresentation = 'TimestampSeconds',
@@ -188,8 +185,11 @@ def truncate_timestamp(
             dt_trunc = dt_trunc + datetime.timedelta(days=1)
     elif interval == 'week':
         seconds = timestamp_convert.timestamp_to_seconds(dt)
-        sunday = math.floor((seconds + 4 * 86400) / 7 / 86400) * 86400 * 7
-        if seconds > sunday:
+        sunday = (
+            math.floor((seconds + 4 * 86400) / 7 / 86400) * 86400 * 7
+            - 4 * 86400
+        )
+        if direction == 'ceiling':
             sunday = sunday + 7 * 86400
         dt_trunc = timestamp_convert.timestamp_to_datetime(sunday)
     elif interval == 'month':
