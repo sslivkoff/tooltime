@@ -48,6 +48,7 @@ def get_standard_timeperiod(
     - boundary_unit: str name of boundary unit to be shaved off open intervals
     """
 
+    weekwise = None
     if (timelength_label is not None) and (block_unit is not None):
         raise Exception('must specify either timelength_label or block_unit')
     elif (timelength_label is None) and (block_unit is not None):
@@ -55,6 +56,7 @@ def get_standard_timeperiod(
             block_size = 1
     elif (timelength_label is not None) and (block_unit is None):
         if timelength_label.endswith('w'):
+            weekwise = timelength_label
             number = int(timelength_label[:-1])
             timelength_label = str(7 * number) + 'd'
 
@@ -115,6 +117,10 @@ def get_standard_timeperiod(
     # get timestamps
     start = int(from_datetime.timestamp())
     end = int(to_datetime.timestamp())
+
+    if weekwise is not None:
+        start = timestamp_utils.floor_timestamp(start, interval='week')
+        end = timestamp_utils.floor_timestamp(end, interval='week')
 
     return {'start': start, 'end': end}
 
