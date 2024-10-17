@@ -160,9 +160,9 @@ def get_standard_intervals(
 
     # parse interval_size
     if interval_size is not None:
-        date_range_kwargs['freq'] = (
-            timelength_utils.timelength_to_pandas_timelength(interval_size)
-        )
+        date_range_kwargs[
+            'freq'
+        ] = timelength_utils.timelength_to_pandas_timelength(interval_size)
 
     # parse n_intervals
     if window_size is not None:
@@ -212,7 +212,14 @@ def get_interval_df(
     n_intervals: typing.Optional[int] = None,
     window_size: typing.Optional[spec.Timelength] = None,
 ) -> pl.DataFrame:
+    import warnings
     import polars as pl
+
+    warnings.warn(
+        "get_interval_df() is deprecated, convert to get_intervals()",
+        DeprecationWarning,
+        stacklevel=2,
+    )
 
     # create standard timestamps
     timestamps = get_standard_intervals(
@@ -291,3 +298,4 @@ def get_interval_df(
     )
 
     return df
+
