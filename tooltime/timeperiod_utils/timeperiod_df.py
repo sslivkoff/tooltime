@@ -16,6 +16,7 @@ def get_intervals(
     *,
     include_incomplete: bool = True,
     label: typing.Literal['open', 'closed', 'start'] | None = None,
+    clip_inward: bool = False,
 ) -> pl.DataFrame:
     """return standardized, integer-aligned time intervals over range
 
@@ -47,7 +48,7 @@ def get_intervals(
     start_dt = tooltime.timestamp_to_datetime(start)
     end_dt = tooltime.timestamp_to_datetime(end)
 
-    if unit in ['s', 'm', 'h', "d"]:
+    if unit in ['s', 'm', 'h', 'd']:
         # simple units are just an integer number of seconds
         if unit == 's':
             duration = count
@@ -69,7 +70,7 @@ def get_intervals(
             label_col = _create_label(count, '%Y-%m-%d', '-1d', label)
         else:
             label_col = _create_label(count, '%Y-%m-%d %T', '-1' + unit, label)
-    elif unit == "w":
+    elif unit == 'w':
         # weeks require an offset from unix genesis in order to land on sunday
         # unix genesis was a thursday, subtract 4 days
         first_sunday = 0 - 4 * 86400
@@ -83,7 +84,7 @@ def get_intervals(
         )
         timestamps = [_seconds_to_dt(timestamp) for timestamp in raw_timestamps]
         label_col = _create_label(count, '%Y-%m-%d', '-1d', label)
-    elif unit == "M":
+    elif unit == 'M':
         # compute months from unix genesis and then divide into years
         start_month = (start_dt.year - 1970) * 12 + start_dt.month - 1
         start_month = math.floor(start_month / count) * count
@@ -104,7 +105,7 @@ def get_intervals(
             dt = _to_dt(1970 + math.floor(month / 12), month % 12 + 1, 1)
             timestamps.append(dt)
         label_col = _create_label(count, '%Y-%m', '-1mo', label)
-    elif unit == "y":
+    elif unit == 'y':
         # compute years from unix genesis
         start_year = math.floor(start_dt.year / count) * count
         if end_dt == _to_dt(year=end_dt.year, month=1, day=1):
@@ -116,17 +117,39 @@ def get_intervals(
             timestamps.append(_to_dt(year=year, month=1, day=1))
         label_col = _create_label(count, '%Y', '-1y', label)
     else:
-        raise Exception("invalid unit")
+        raise Exception('invalid unit')
 
+    # generate dataframe
     df = pl.DataFrame(
-        {"start": timestamps[:-1], "end": timestamps[1:]},
-        schema={"start": pl.Datetime("ms"), "end": pl.Datetime("ms")},
+        {'start': timestamps[:-1], 'end': timestamps[1:]},
+        schema={'start': pl.Datetime('ms'), 'end': pl.Datetime('ms')},
     )
-    df = df.select(label_col.alias('label'), 'start', 'end')
 
-    # filter out incomplete intervals
-    if not include_incomplete:
-        df = df.filter(pl.col.start >= start * 1000, pl.col.end <= end * 1000)
+    # add completeness label
+    df = df.with_columns(
+        completeness=pl.when(
+            pl.col.start >= start * 1000, pl.col.end <= end * 1000
+        )
+        .then(pl.lit('complete'))
+        .otherwise(pl.lit('incomplete'))
+    )
+
+    # handle incomplete intervals
+    if clip_inward:
+        df = df.with_columns(
+            start=pl.when(pl.col.start <= start * 1000)
+            .then(pl.lit(start * 1000).cast(pl.Datetime('ms')))
+            .otherwise('start'),
+            end=pl.when(pl.col.end > end * 1000)
+            .then(pl.lit(end * 1000).cast(pl.Datetime('ms')))
+            .otherwise('end'),
+            completeness=pl.col.completeness.replace({'incomplete': 'clipped'}),
+        )
+    elif not include_incomplete:
+        df = df.filter(pl.col.completeness != 'incomplete')
+
+    # add label
+    df = df.select(label_col.alias('label'), 'start', 'end', 'completeness')
 
     return df
 
@@ -237,4 +260,3 @@ def _create_label(
 #         return (count * 86400 * 365, count * 86400 * 366)
 #     else:
 #         raise Exception('invalid duration unit: ' + str(unit))
-
