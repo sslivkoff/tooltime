@@ -21,6 +21,7 @@ def get_intervals(
     """return standardized, integer-aligned time intervals over range
 
     - interval is in str format '{number}{time_unit}'
+        - alternatives can be {second, minute, hour, day, week, month, year}
         - number = integer
         - time_unit = s, m, h, d, w, M, q, y
     - end column timestamp is considered non-inclusive in range
@@ -34,6 +35,22 @@ def get_intervals(
     import math
     import tooltime
     import polars as pl
+
+    # convert literal names
+    if interval == 'second':
+        interval = '1s'
+    elif interval == 'minute':
+        interval = '1m'
+    elif interval == 'hour':
+        interval = '1h'
+    elif interval == 'day':
+        interval = '1d'
+    elif interval == 'week':
+        interval = '1w'
+    elif interval == 'month':
+        interval = '1M'
+    elif interval == 'year':
+        interval = '1y'
 
     # parse interval
     count = int(interval[:-1])

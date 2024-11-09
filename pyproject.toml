@@ -28,5 +28,8 @@ files = ["tooltime"]
 [tool.ruff]
 line-length = 80
 
+[tool.ruff.lint]
+ignore = ["F403"]
+
 [tool.ruff.format]
 quote-style = "single"
