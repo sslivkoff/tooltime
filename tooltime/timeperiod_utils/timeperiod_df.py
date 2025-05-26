@@ -17,8 +17,11 @@ def get_intervals(
     include_incomplete: bool = True,
     label: typing.Literal['open', 'closed', 'start'] | None = None,
     clip_inward: bool = False,
+    include_end: bool = False,
 ) -> pl.DataFrame:
     """return standardized, integer-aligned time intervals over range
+
+    - clip_inward: clip incomplete intervals to fall between start and end
 
     - interval is in str format '{number}{time_unit}'
         - alternatives can be {second, minute, hour, day, week, month, year}
@@ -49,8 +52,26 @@ def get_intervals(
         interval = '1w'
     elif interval == 'month':
         interval = '1M'
+    elif interval == 'quarter':
+        interval = '1q'
     elif interval == 'year':
         interval = '1y'
+
+    interval_nicknames = {
+        'second': 's',
+        'minute': 'm',
+        'hour': 'h',
+        'day': 'd',
+        'week': 'w',
+        'month': 'M',
+        'quarter': 'q',
+        'year': 'y',
+        'mo': 'M',
+    }
+    for nickname, actual_name in interval_nicknames.items():
+        if interval.endswith(nickname):
+            interval = interval[:-2] + actual_name
+            break
 
     # parse interval
     count = int(interval[:-1])
@@ -82,6 +103,8 @@ def get_intervals(
         timestamps = []
         for seconds in range(start, end + duration, duration):
             timestamps.append(_seconds_to_dt(seconds))
+        if include_end:
+            timestamps.append(_seconds_to_dt(end + duration))
 
         if unit == 'd':
             label_col = _create_label(count, '%Y-%m-%d', '-1d', label)
@@ -100,6 +123,10 @@ def get_intervals(
             duration,
         )
         timestamps = [_seconds_to_dt(timestamp) for timestamp in raw_timestamps]
+        if include_end:
+            timestamps.append(
+                _seconds_to_dt(end_week * duration + first_sunday + duration)
+            )
         label_col = _create_label(count, '%Y-%m-%d', '-1d', label)
     elif unit == 'M':
         # compute months from unix genesis and then divide into years
@@ -118,7 +145,11 @@ def get_intervals(
         end_month = math.ceil(end_month / count) * count
 
         timestamps = []
-        for month in range(start_month, end_month + count, count):
+        if include_end:
+            end_range_month = end_month + count + count
+        else:
+            end_range_month = end_month + count
+        for month in range(start_month, end_range_month, count):
             dt = _to_dt(1970 + math.floor(month / 12), month % 12 + 1, 1)
             timestamps.append(dt)
         label_col = _create_label(count, '%Y-%m', '-1mo', label)
@@ -132,6 +163,8 @@ def get_intervals(
         timestamps = []
         for year in range(start_year, end_year + count, count):
             timestamps.append(_to_dt(year=year, month=1, day=1))
+        if include_end:
+            timestamps.append(_to_dt(year=end_year + count, month=1, day=1))
         label_col = _create_label(count, '%Y', '-1y', label)
     else:
         raise Exception('invalid unit')
@@ -141,6 +174,10 @@ def get_intervals(
         {'start': timestamps[:-1], 'end': timestamps[1:]},
         schema={'start': pl.Datetime('ms'), 'end': pl.Datetime('ms')},
     )
+
+    # trim extraneous
+    if include_end:
+        df = df.filter(pl.col.start.cast(pl.Int64) <= end * 1000)
 
     # add completeness label
     df = df.with_columns(
