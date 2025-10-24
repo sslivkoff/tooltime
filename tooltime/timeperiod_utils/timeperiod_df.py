@@ -18,6 +18,7 @@ def get_intervals(
     label: typing.Literal['open', 'closed', 'start'] | None = None,
     clip_inward: bool = False,
     include_end: bool = False,
+    resolution: typing.Literal['ms', 'us', 'ns'] = 'ms',
 ) -> pl.DataFrame:
     """return standardized, integer-aligned time intervals over range
 
@@ -170,9 +171,13 @@ def get_intervals(
         raise Exception('invalid unit')
 
     # generate dataframe
+    timezone = 'utc'
     df = pl.DataFrame(
         {'start': timestamps[:-1], 'end': timestamps[1:]},
-        schema={'start': pl.Datetime('ms'), 'end': pl.Datetime('ms')},
+        schema={
+            'start': pl.Datetime(resolution, timezone),
+            'end': pl.Datetime(resolution, timezone),
+        },
     )
 
     # trim extraneous
