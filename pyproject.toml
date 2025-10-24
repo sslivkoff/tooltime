@@ -10,7 +10,8 @@ requires-python = ">=3.7"
 dynamic = ["version", "description"]
 license = {file = "LICENSE"}
 dependencies = [
-    "typing-extensions>=4.0.0"
+    "polars>=0.18.4",
+    "typing-extensions>=4.0.0",
 ]
 
 [project.optional-dependencies]
@@ -33,3 +34,8 @@ ignore = ["F403"]
 
 [tool.ruff.format]
 quote-style = "single"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.4.1",
+]
